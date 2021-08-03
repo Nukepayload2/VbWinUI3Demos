@@ -15,7 +15,7 @@ Partial Class MainWindow
     }
 
     WithEvents ConvertStatus As New TextBlock With {
-        .Text = "Ready"
+        .Text = "Ready. Drag and drop mp4 files to add to conversion list."
     }
 
     WithEvents ConvertingFiles As New ListBox With {
@@ -40,7 +40,15 @@ Partial Class MainWindow
         Grid.SetRow(ConvertingFiles, 1)
         Dim fileTemplate As DataTemplate = XamlReader.Load((
             <DataTemplate>
-                <TextBlock Text="{Binding Path=Path, Mode=OneTime}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        Glyph="{Binding Path=Icon, Mode=OneWay}"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Path=Path, Mode=OneTime}"/>
+                </Grid>
             </DataTemplate>
         ).ToString)
 

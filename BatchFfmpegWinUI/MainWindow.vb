@@ -63,6 +63,7 @@ Public Class MainWindow
                 If _convSoftCancel IsNot Nothing Then
                     _convertStatusCode = ConvertStatusCode.StopRequested
                     _convSoftCancel.Value = True
+                    _convSoftCancel = Nothing
                     BtnConvertStop.Content = "Terminate"
                 End If
             Case ConvertStatusCode.StopRequested

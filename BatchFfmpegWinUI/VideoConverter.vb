@@ -27,34 +27,46 @@ Module VideoConverter
         Try
             Dim index = 1
             Dim timer As New Stopwatch
+
             For Each vidFile In fileList
                 statusCallback($"Converting {index}/{fileList.Count}")
-                If File.Exists(vidFile.Output) Then Continue For
+                If File.Exists(vidFile.Output) Then
+                    index += 1
+                    vidFile.Icon = ChrW(&HE001)
+                    Continue For
+                End If
+
+                vidFile.Icon = ChrW(&HE768)
 
                 Dim procStart As New ProcessStartInfo With {
                     .UseShellExecute = False,
                     .FileName = "cmd",
                     .Arguments = $"/c H265.bat ""{vidFile.Path}""",
-                    .WindowStyle = ProcessWindowStyle.Minimized
+                    .CreateNoWindow = True
                 }
 
                 Dim proc = Process.Start(procStart)
 
                 timer.Start()
 
+                Dim killingEx As TaskCanceledException = Nothing
                 Try
                     Await proc.WaitForExitAsync(cancelToken)
                 Catch ex As TaskCanceledException
-                    proc.Kill(True)
-                    Dim convertedPath = vidFile.Output
-                    If File.Exists(convertedPath) Then
-                        File.Delete(convertedPath)
-                    End If
-
-                    Throw
+                    killingEx = ex
                 End Try
 
+                If killingEx IsNot Nothing Then
+                    statusCallback("Cleaning canceled file...")
+                    proc.Kill(True)
+                    Dim convertedPath = vidFile.Output
+                    Await DeleteFileWithRetryAsync(convertedPath)
+                    Throw killingEx
+                End If
+
                 timer.Stop()
+
+                vidFile.Icon = ChrW(&HE001)
 
                 cancelToken = Await PreventOverheatAsync(statusCallback, timer, cancelToken, softStop)
 
@@ -66,13 +78,31 @@ Module VideoConverter
                 index += 1
             Next
 
-            statusCallback("Done")
-            Await MsgBoxAsync("Mission accomplished")
+            If softStop.Value Then
+                statusCallback("Stopped")
+                Await MsgBoxAsync("Conversion was stopped")
+            Else
+                statusCallback("Done")
+                Await MsgBoxAsync("Mission accomplished")
+            End If
         Catch ex As TaskCanceledException
             statusCallback("Conversion was terminated")
         Catch ex As Exception
             statusCallback($"Error {ex.GetType.Name}: {ex.Message}")
         End Try
+    End Function
+
+    Private Async Function DeleteFileWithRetryAsync(convertedPath As String) As Task
+        If File.Exists(convertedPath) Then
+            Do
+                Try
+                    File.Delete(convertedPath)
+                    Exit Do
+                Catch ex As Exception
+                End Try
+                Await Task.Delay(200)
+            Loop
+        End If
     End Function
 
     Private Async Function PreventOverheatAsync(statusCallback As Action(Of String), timer As Stopwatch, cancelToken As Threading.CancellationToken, softStop As StrongBox(Of Boolean)) As Task(Of Threading.CancellationToken)
@@ -90,11 +120,12 @@ Module VideoConverter
 
         If waitSec > 0 Then
             For i = waitSec To 1 Step -1
-                If softStop.Value Then
-                    Exit For
-                End If
                 statusCallback("Sleeping... " & i)
-                Await Task.Delay(1000, cancelToken)
+                For j = 1 To 10
+                    If softStop.Value Then Exit For
+                    Await Task.Delay(100, cancelToken)
+                Next
+                If softStop.Value Then Exit For
             Next
         Else
             cancelToken.ThrowIfCancellationRequested()
