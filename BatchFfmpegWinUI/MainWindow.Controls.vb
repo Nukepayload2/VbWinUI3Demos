@@ -28,6 +28,9 @@ Partial Class MainWindow
 
     Sub New()
         Title = "WinUI 3 VB Demo - H265 mp4 converter"
+
+        UseRoundCornerdUI()
+
         With LayoutRoot.RowDefinitions
             .Add(New RowDefinition With {.Height = GridLength.Auto})
             .Add(New RowDefinition With {.Height = New GridLength(1, GridUnitType.Star)})
@@ -54,6 +57,17 @@ Partial Class MainWindow
 
         ConvertingFiles.ItemTemplate = fileTemplate
         LayoutRoot.Children.Add(ConvertingFiles)
+    End Sub
+
+    Private Sub UseRoundCornerdUI()
+        Dim dict As New ResourceDictionary
+        Dim themes As New ResourceDictionary With {
+            .Source = New Uri("ms-appx:///Microsoft.UI.Xaml/Themes/themeresources.xaml")
+        }
+        Dim mergeDict = dict.MergedDictionaries
+        mergeDict.Add(themes)
+
+        LayoutRoot.Resources = dict
     End Sub
 
     Private Sub MainWindow_Activated(sender As Object, args As WindowActivatedEventArgs) Handles Me.Activated
