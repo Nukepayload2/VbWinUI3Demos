@@ -7,6 +7,11 @@ Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "BatchFfmpegWinUI", "BatchFf
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "BatchFfmpegWinUI_Pack", "BatchFfmpegWinUI_Pack\BatchFfmpegWinUI_Pack.wapproj", "{491C0DE8-3ED2-46C4-B722-387C55AA16C2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{62C1139F-B944-4DB9-A608-8E98F5E72865}"
+	ProjectSection(SolutionItems) = preProject
+		ReadMe.md = ReadMe.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
