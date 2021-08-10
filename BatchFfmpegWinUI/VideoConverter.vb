@@ -56,8 +56,10 @@ Module VideoConverter
 
                 Dim killingEx As TaskCanceledException = Nothing
                 Try
+                    Dim stdErr = Await proc.StandardError.ReadToEndAsync
+                    Dim stdOut = Await proc.StandardOutput.ReadToEndAsync
                     Await proc.WaitForExitAsync(cancelToken)
-                    Await ThrowForExternalException(proc)
+                    ThrowForExternalException(proc, stdErr, stdOut)
                 Catch ex As TaskCanceledException
                     killingEx = ex
                 End Try
@@ -102,13 +104,11 @@ Module VideoConverter
         Return success
     End Function
 
-    Private Async Function ThrowForExternalException(proc As Process) As Task
+    Private Sub ThrowForExternalException(proc As Process, stdErr As String, stdOut As String)
         If proc.ExitCode = 0 Then
             Return
         End If
 
-        Dim stdErr = Await proc.StandardError.ReadToEndAsync
-        Dim stdOut = Await proc.StandardOutput.ReadToEndAsync
         Dim errMsg = String.Empty
         If stdErr <> Nothing Then
             errMsg = "Error: " & stdErr.Trim
@@ -118,7 +118,7 @@ Module VideoConverter
             errMsg &= "Output: " & stdOut.Trim
         End If
         Throw New Win32Exception($"Call ffmpeg failed. {Environment.NewLine}{errMsg}")
-    End Function
+    End Sub
 
     Private Async Function DeleteFileWithRetryAsync(convertedPath As String) As Task
         If File.Exists(convertedPath) Then
