@@ -16,4 +16,10 @@ Public Class Application
         Dim appDir = Path.GetDirectoryName(GetType(Program).Assembly.Location)
         Directory.SetCurrentDirectory(appDir)
     End Sub
+
+    Private Sub Application_UnhandledException(
+            sender As Object,
+            e As UnhandledExceptionEventArgs) Handles Me.UnhandledException
+        Stop
+    End Sub
 End Class
