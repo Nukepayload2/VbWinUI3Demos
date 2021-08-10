@@ -1,5 +1,6 @@
 ﻿Option Strict On
 
+Imports System.Collections.ObjectModel
 Imports System.Runtime.CompilerServices
 Imports System.Threading
 Imports Microsoft.UI.Xaml
@@ -16,7 +17,7 @@ Public Class MainWindow
         e.AcceptedOperation = DataPackageOperation.Link
     End Sub
 
-    Private _fileList As List(Of ConvertibleVideo)
+    Private _fileList As ObservableCollection(Of ConvertibleVideo)
     Private _convertStatusCode As ConvertStatusCode
 
     Private Async Sub LayoutRoot_Drop(sender As Object, e As DragEventArgs) Handles LayoutRoot.Drop
@@ -29,8 +30,15 @@ Public Class MainWindow
         Dim curErr As Exception = Nothing
         Try
             Dim droppedItems = Await dataView.GetStorageItemsAsync
-            _fileList = GetConvertibleVideos(droppedItems)
-            ConvertingFiles.ItemsSource = _fileList
+            Dim files = GetConvertibleVideos(droppedItems)
+            If _fileList Is Nothing Then
+                _fileList = New ObservableCollection(Of ConvertibleVideo)(files)
+                ConvertingFiles.ItemsSource = _fileList
+            Else
+                For Each f In files
+                    _fileList.Add(f)
+                Next
+            End If
         Catch ex As Exception
             curErr = ex
         End Try
@@ -48,13 +56,18 @@ Public Class MainWindow
             Case ConvertStatusCode.Idle
                 If _fileList Is Nothing Then
                     ConvertStatus.Text = "Drop files and try again"
+                    Return
                 End If
+
                 BtnConvertStop.Content = "Stop after this file"
                 _convertStatusCode = ConvertStatusCode.Converting
                 _convHardCancel = New CancellationTokenSource
                 _convSoftCancel = New StrongBox(Of Boolean)
-                Await ConvertAsync(_fileList, Sub(status) ConvertStatus.Text = status,
+                Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.Text = status,
                                    _convHardCancel.Token, _convSoftCancel)
+                If succeed Then
+                    _fileList = Nothing
+                End If
                 _convertStatusCode = ConvertStatusCode.Idle
                 _convSoftCancel = Nothing
                 _convHardCancel = Nothing

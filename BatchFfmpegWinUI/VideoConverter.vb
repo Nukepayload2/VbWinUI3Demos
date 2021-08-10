@@ -1,5 +1,6 @@
 ﻿Option Strict On
 
+Imports System.ComponentModel
 Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports Windows.Storage
@@ -20,10 +21,12 @@ Module VideoConverter
         Return files
     End Function
 
-    Async Function ConvertAsync(fileList As List(Of ConvertibleVideo),
+    Async Function ConvertAsync(fileList As IReadOnlyList(Of ConvertibleVideo),
                           statusCallback As Action(Of String),
                           cancelToken As Threading.CancellationToken,
-                          softStop As StrongBox(Of Boolean)) As Task
+                          softStop As StrongBox(Of Boolean)) As Task(Of Boolean)
+
+        Dim success = False
         Try
             Dim index = 1
             Dim timer As New Stopwatch
@@ -42,7 +45,9 @@ Module VideoConverter
                     .UseShellExecute = False,
                     .FileName = "cmd",
                     .Arguments = $"/c H265.bat ""{vidFile.Path}""",
-                    .CreateNoWindow = True
+                    .CreateNoWindow = True,
+                    .RedirectStandardOutput = True,
+                    .RedirectStandardError = True
                 }
 
                 Dim proc = Process.Start(procStart)
@@ -52,6 +57,7 @@ Module VideoConverter
                 Dim killingEx As TaskCanceledException = Nothing
                 Try
                     Await proc.WaitForExitAsync(cancelToken)
+                    Await ThrowForExternalException(proc)
                 Catch ex As TaskCanceledException
                     killingEx = ex
                 End Try
@@ -85,11 +91,33 @@ Module VideoConverter
                 statusCallback("Done")
                 Await MsgBoxAsync("Mission accomplished")
             End If
+
+            success = True
         Catch ex As TaskCanceledException
             statusCallback("Conversion was terminated")
         Catch ex As Exception
             statusCallback($"Error {ex.GetType.Name}: {ex.Message}")
         End Try
+
+        Return success
+    End Function
+
+    Private Async Function ThrowForExternalException(proc As Process) As Task
+        If proc.ExitCode = 0 Then
+            Return
+        End If
+
+        Dim stdErr = Await proc.StandardError.ReadToEndAsync
+        Dim stdOut = Await proc.StandardOutput.ReadToEndAsync
+        Dim errMsg = String.Empty
+        If stdErr <> Nothing Then
+            errMsg = "Error: " & stdErr.Trim
+        End If
+        If stdOut <> Nothing Then
+            If errMsg.Length > 0 Then errMsg &= Environment.NewLine
+            errMsg &= "Output: " & stdOut.Trim
+        End If
+        Throw New Win32Exception($"Call ffmpeg failed. {Environment.NewLine}{errMsg}")
     End Function
 
     Private Async Function DeleteFileWithRetryAsync(convertedPath As String) As Task
@@ -136,7 +164,8 @@ Module VideoConverter
 
     Private Sub TryAddMp4File(files As List(Of ConvertibleVideo),
                               name As String, dirName As String, filePath As String)
-        If Not name.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) Then Return
+        If Not name.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) AndAlso
+            Not name.EndsWith(".mkv", StringComparison.OrdinalIgnoreCase) Then Return
         If name.EndsWith("_h265.mp4", StringComparison.OrdinalIgnoreCase) Then Return
 
         Dim convertedPath = GetConvertedPath(name, dirName)
@@ -150,7 +179,7 @@ Module VideoConverter
     End Function
 
     Private Sub AddMp4FilesFromDir(files As List(Of ConvertibleVideo), item As IStorageItem)
-        Dim fileInfo = New DirectoryInfo(item.Path).GetFiles("*.mp4", SearchOption.AllDirectories)
+        Dim fileInfo = New DirectoryInfo(item.Path).GetFiles("*", SearchOption.AllDirectories)
         For Each f In fileInfo
             TryAddMp4File(files, f.Name, f.DirectoryName, f.FullName)
         Next
