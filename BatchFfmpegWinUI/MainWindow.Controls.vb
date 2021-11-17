@@ -29,7 +29,7 @@ Partial Class MainWindow
     Sub New()
         Title = "WinUI 3 VB Demo - H265 mp4 converter"
 
-        UseRoundCornerdUI()
+        'UseRoundCornerdUI()
 
         With LayoutRoot.RowDefinitions
             .Add(New RowDefinition With {.Height = GridLength.Auto})
