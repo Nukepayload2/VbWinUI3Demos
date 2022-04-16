@@ -56,10 +56,11 @@ Module VideoConverter
 
                 Dim killingEx As TaskCanceledException = Nothing
                 Try
-                    Dim stdErr = Await proc.StandardError.ReadToEndAsync
-                    Dim stdOut = Await proc.StandardOutput.ReadToEndAsync
+                    Dim stdErrTask = proc.StandardError.ReadToEndAsync
+                    Dim stdOutTask = proc.StandardOutput.ReadToEndAsync
                     Await proc.WaitForExitAsync(cancelToken)
-                    ThrowForExternalException(proc, stdErr, stdOut)
+                    Await Task.WhenAll(stdErrTask, stdOutTask)
+                    ThrowForExternalException(proc, stdErrTask.Result, stdOutTask.Result)
                 Catch ex As TaskCanceledException
                     killingEx = ex
                 End Try
