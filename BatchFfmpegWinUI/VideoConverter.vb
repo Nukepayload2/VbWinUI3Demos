@@ -44,7 +44,7 @@ Module VideoConverter
                 Dim procStart As New ProcessStartInfo With {
                     .UseShellExecute = False,
                     .FileName = "cmd",
-                    .Arguments = $"/c H265.bat ""{vidFile.Path}""",
+                    .Arguments = $"/c H265.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
                     .CreateNoWindow = True,
                     .RedirectStandardOutput = True,
                     .RedirectStandardError = True
@@ -58,7 +58,6 @@ Module VideoConverter
                 Try
                     Dim stdErrTask = proc.StandardError.ReadToEndAsync
                     Dim stdOutTask = proc.StandardOutput.ReadToEndAsync
-                    Await proc.WaitForExitAsync(cancelToken)
                     Await Task.WhenAll(stdErrTask, stdOutTask)
                     ThrowForExternalException(proc, stdErrTask.Result, stdOutTask.Result)
                 Catch ex As TaskCanceledException
@@ -77,7 +76,9 @@ Module VideoConverter
 
                 vidFile.Icon = ChrW(&HE001)
 
-                cancelToken = Await PreventOverheatAsync(statusCallback, timer, cancelToken, softStop)
+                If index < fileList.Count - 1 Then
+                    cancelToken = Await PreventOverheatAsync(statusCallback, timer, cancelToken, softStop)
+                End If
 
                 If softStop.Value Then
                     statusCallback("Conversion was canceled")
@@ -163,11 +164,16 @@ Module VideoConverter
         Return cancelToken
     End Function
 
+    Private ReadOnly _allowedExt As New HashSet(Of String) From {
+        ".mp4", ".mkv", ".flv", ".avi", ".wmv", ".mpg", ".mov"
+    }
+
     Private Sub TryAddMp4File(files As List(Of ConvertibleVideo),
                               name As String, dirName As String, filePath As String)
-        If Not name.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) AndAlso
-            Not name.EndsWith(".mkv", StringComparison.OrdinalIgnoreCase) Then Return
-        If name.EndsWith("_h265.mp4", StringComparison.OrdinalIgnoreCase) Then Return
+        Dim ext = Path.GetExtension(name)
+        If Not _allowedExt.Contains(ext) Then Return
+        Dim nameNoExt = Path.GetFileNameWithoutExtension(name)
+        If nameNoExt.EndsWith("_h265", StringComparison.OrdinalIgnoreCase) Then Return
 
         Dim convertedPath = GetConvertedPath(name, dirName)
         files.Add(New ConvertibleVideo With {.Path = filePath, .Output = convertedPath})
