@@ -17,6 +17,14 @@
   <PropertyGroup>
     <NoWarn>CA1416, $(NoWarn)</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="App.xbf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App.xbf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
@@ -32,5 +40,12 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
   </ItemGroup>-->
-
+  <Target Name="GetPriIndexName">
+    <PropertyGroup>
+      <!-- Winmd library targets use the default root namespace of the project for the App package name -->
+      <PriIndexName Condition="'$(RootNamespace)' != ''">$(RootNamespace)</PriIndexName>
+      <!-- If RootNamespace is empty fall back to TargetName -->
+      <PriIndexName Condition="$(PriIndexName) == ''">$(TargetName)</PriIndexName>
+    </PropertyGroup>
+  </Target>
 </Project>

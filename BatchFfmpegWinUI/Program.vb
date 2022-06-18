@@ -18,6 +18,6 @@ Module Program
         Dim synchronizationContext As New DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread())
         Threading.SynchronizationContext.SetSynchronizationContext(synchronizationContext)
         HostServices.VBHost = WinUIVbHost.Instance
-        Dim app As New Application
+        Dim app As New App
     End Sub
 End Module
