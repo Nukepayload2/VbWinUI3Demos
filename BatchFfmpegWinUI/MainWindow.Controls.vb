@@ -1,13 +1,16 @@
 ﻿Option Strict Off
 
+Imports Microsoft.UI.Composition
+Imports Microsoft.UI.Composition.SystemBackdrops
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
 Imports Microsoft.UI.Xaml.Markup
 Imports Microsoft.UI.Xaml.Media
+Imports WinRT
 Imports <xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 
 Partial Class MainWindow
-
+    Private ReadOnly _backdrop As BackdropHelper
     WithEvents LayoutRoot As New Grid With {
         .Margin = New Thickness(4),
         .Background = New SolidColorBrush(Microsoft.UI.Colors.Transparent),
@@ -57,6 +60,10 @@ Partial Class MainWindow
 
         ConvertingFiles.ItemTemplate = fileTemplate
         LayoutRoot.Children.Add(ConvertingFiles)
+
+        _backdrop = New BackdropHelper(Me)
+
+        _backdrop.SetBackdrop(BackdropType.Mica)
     End Sub
 
     Private Sub UseRoundCornerdUI()

@@ -5,7 +5,11 @@ Imports Microsoft.UI.Xaml
 Imports Microsoft.VisualBasic.CompilerServices
 
 Module Program
+
+    Private Declare Sub XamlCheckProcessRequirements Lib "Microsoft.ui.xaml.dll" ()
+
     Sub Main()
+        XamlCheckProcessRequirements
         WinRT.ComWrappersSupport.InitializeComWrappers()
         Microsoft.UI.Xaml.Application.Start(AddressOf OnAppInit)
     End Sub
