@@ -4,7 +4,7 @@ Imports Microsoft.UI.Xaml
 Imports Windows.Foundation
 Imports WinRT
 
-' Copied from https://github.com/microsoft/WinUI-Gallery/blob/260cb720ef83b3d134bc4805cffcfac9461dce33/WinUIGallery/ControlPagesSampleCode/SystemBackdrops/SystemBackdropsSample1.txt
+' Copied from https://github.com/microsoft/WinUI-Gallery
 
 Public Class BackdropHelper
     Private ReadOnly window As Window

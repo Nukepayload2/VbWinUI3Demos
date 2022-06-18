@@ -9,6 +9,8 @@
     <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
     <UseWindowsForms>true</UseWindowsForms>
+    <ImportFrameworkWinFXTargets>true</ImportFrameworkWinFXTargets>
+    <DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
 
   <!-- Workaround for https://github.com/dotnet/sdk/issues/17890 -->
@@ -23,4 +25,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.1" />
   </ItemGroup>
+
+  <!-- Triggers bugs in XAML compiler -->
+  <!--<ItemGroup>
+    <ApplicationDefinition Include="Application.xaml.xml">
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+  </ItemGroup>-->
+
 </Project>

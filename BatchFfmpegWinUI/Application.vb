@@ -8,9 +8,8 @@ Public Class Application
         InitializeComponent()
     End Sub
 
-    Private Sub InitializeComponent()
-        'Dim uri As New Uri("ms-appx:///App.xaml")
-        'LoadComponent(Me, uri)
+    Partial Private Sub InitializeComponent()
+
     End Sub
 
     Private _mWindow As Window

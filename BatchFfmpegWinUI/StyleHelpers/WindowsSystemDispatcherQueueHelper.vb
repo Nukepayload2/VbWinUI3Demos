@@ -1,7 +1,7 @@
 ﻿Imports System.Runtime.InteropServices
 Imports Microsoft.UI.Dispatching
 
-' Copied from https://github.com/microsoft/WinUI-Gallery/blob/260cb720ef83b3d134bc4805cffcfac9461dce33/WinUIGallery/ControlPagesSampleCode/SystemBackdrops/SystemBackdropsSample1.txt
+' Copied from https://github.com/microsoft/WinUI-Gallery
 
 ''' <summary>
 ''' Advanced version of DispatcherQueueController .
