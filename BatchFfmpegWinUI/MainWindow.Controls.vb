@@ -11,7 +11,7 @@ Imports <xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 Partial Class MainWindow
     WithEvents LayoutRoot As New Grid With {
         .Margin = New Thickness(4),
-        .Background = New SolidColorBrush(Microsoft.UI.Colors.Transparent),
+        .Background = New SolidColorBrush(Colors.Transparent),
         .AllowDrop = True
     }
 
@@ -41,15 +41,23 @@ Partial Class MainWindow
         _backdrop = New BackdropHelper(Me)
         _backdrop.SetBackdrop(BackdropType.Mica)
 
-        With GetAppWindow.TitleBar
-            .ExtendsContentIntoTitleBar = True
-            .ButtonBackgroundColor = Colors.Transparent
-        End With
+        Dim titleBar = GetAppWindow.TitleBar
+        If titleBar IsNot Nothing Then
+            ' Windows 11
+            With GetAppWindow.TitleBar
+                .ExtendsContentIntoTitleBar = True
+                .ButtonBackgroundColor = Colors.Transparent
+            End With
+        Else
+            ' Windows 10
+            LayoutRoot.RowDefinitions(0).Height = New GridLength(0, GridUnitType.Pixel)
+            TblTitleText.Visibility = Visibility.Collapsed
+        End If
     End Sub
 
     Private Shared Function GetTitleBarHeight(appWnd As AppWindow) As Integer
-        Dim titleBarHeight = appWnd.TitleBar.Height
-        If titleBarHeight = 0 Then
+        Dim titleBarHeight = appWnd.TitleBar?.Height
+        If titleBarHeight.GetValueOrDefault = 0 Then
             ' Sometimes appWnd.TitleBar.Height = 0. Use values from WinForms as fallback.
             titleBarHeight = System.Windows.Forms.SystemInformation.CaptionHeight
         End If
