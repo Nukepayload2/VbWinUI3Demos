@@ -4,7 +4,7 @@ Demonstrates how to use WinUI 3 in Visual Basic .NET projects.
 ## Progress
 - [x] No C# or C++ projects for startup
 - [x] Load `XamlControlsResources` from `Microsoft.UI.Xaml.Controls` automatically
-- [x] Use a custom `Sub Main` - You can enable high DPI,  or add reg-free WinRT by editing `Program.vb`.
+- [x] Use a custom `Sub Main` - You can enable high DPI, add dynamic dependencies or add reg-free WinRT support by editing `Program.vb`.
 - [x] Allow Windows Forms integration, such as registering `HostServices.VBHost` at startup
 - [x] Make sure Mica and Acrylic are working as expected on Windows 11
 - [x] Workaround blocking bugs of the WinUI 3 XAML compiler - Generate Xbf files and VB source files
