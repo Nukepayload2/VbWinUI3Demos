@@ -18,12 +18,10 @@
     <NoWarn>CA1416, $(NoWarn)</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="App.xbf" />
+    <None Remove="App.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App.xbf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Page Remove="App.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,12 +38,29 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
   </ItemGroup>-->
-  <Target Name="GetPriIndexName">
+  
+  <Target Name="DisableVBCodeGeneration" BeforeTargets="DesignTimeMarkupCompilationCT;MarkupCompilePass1;MarkupCompilePass2">
     <PropertyGroup>
-      <!-- Winmd library targets use the default root namespace of the project for the App package name -->
-      <PriIndexName Condition="'$(RootNamespace)' != ''">$(RootNamespace)</PriIndexName>
-      <!-- If RootNamespace is empty fall back to TargetName -->
-      <PriIndexName Condition="$(PriIndexName) == ''">$(TargetName)</PriIndexName>
+      <XamlLanguage>C#</XamlLanguage>
     </PropertyGroup>
   </Target>
+  
+  <Target Name="RecoverVBCodeGeneration" AfterTargets="MarkupCompilePass2" BeforeTargets="XamlPreCompile">
+    <PropertyGroup>
+      <XamlLanguage>$(Language)</XamlLanguage>
+    </PropertyGroup>
+  </Target>
+  
+  <Target Name="ExcludeCSFiles" BeforeTargets="XamlPreCompile">
+    <ItemGroup>
+      <Compile Remove="$(MSBuildThisFileDirectory)obj\**\*.cs" />
+    </ItemGroup>
+  </Target>
+  
+  <Target Name="SpecifyVBRuntimeForXamlPreCompile" BeforeTargets="XamlPreCompile">
+    <PropertyGroup>
+      <VBRuntime>None</VBRuntime>
+    </PropertyGroup>
+  </Target>
+  
 </Project>

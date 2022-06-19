@@ -19,7 +19,7 @@ Public Class App
         _contentLoaded = True
 
         ' If you want to load App.xbf, use App.xaml. Application.xaml points to a non-exist file.
-        Dim resourceLocator As New Uri("ms-appx:///Application.xaml")
+        Dim resourceLocator As New Uri("ms-appx:///App.xaml")
         Application.LoadComponent(Me, resourceLocator)
     End Sub
 
