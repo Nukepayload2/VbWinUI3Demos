@@ -1,0 +1,7 @@
+<Project>
+
+  <PropertyGroup>
+    <WinUI3VBTargetFilePath>$(MSBuildThisFileDirectory)WinUI3.VisualBasic.targets</WinUI3VBTargetFilePath>
+  </PropertyGroup>
+
+</Project>
