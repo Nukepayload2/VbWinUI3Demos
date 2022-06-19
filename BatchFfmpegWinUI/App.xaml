@@ -3,10 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- TODO: Compile this file to App.xbf with a custom MSBuild task. -->
-    <!-- WinUI 3 can't handle Application Definitions in VB projects (tested with v1.1.1). -->
-    <!-- Maybe changing XamlLanguage before DesignTimeMarkupCompilationCT is an option? -->
-
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,4 +10,5 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
+    
 </Application>

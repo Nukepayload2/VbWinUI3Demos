@@ -4,7 +4,6 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>BatchFfmpegWinUI</RootNamespace>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
-    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
     <Platforms>x86;x64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
@@ -19,22 +18,9 @@
   <PropertyGroup>
     <NoWarn>CA1416, $(NoWarn)</NoWarn>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="MainWindow.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
 
   <!-- Workaround for XamlPreCompile compilation errors -->
