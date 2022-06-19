@@ -8,6 +8,12 @@ Imports Microsoft.UI.Xaml.Markup
 Imports Microsoft.UI.Xaml.Media
 Imports <xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 
+' The code generator of WinUI 3 generates wrong VB code for pages.
+' So, we have to build the visual tree with VB directly.
+' We can replace the original WinUI3 VB code generator with ours by writing source generators.
+' Or, we can also trick the WinUI 3 code generator to generate C# code by setting XamlLanguage before
+' "DesignTimeMarkupCompilationCT;MarkupCompilePass1;MarkupCompilePass2", then, convert C# code to VB.
+
 Partial Class MainWindow
     WithEvents LayoutRoot As New Grid With {
         .Margin = New Thickness(4),
@@ -68,9 +74,6 @@ Partial Class MainWindow
     Private Sub InitializeComponents()
         Title = "WinUI 3 VB Demo - H265 mp4 converter"
 
-        ' Crash if App.xbf doesn't exist.
-        ' UseRoundCornerdUI()
-
         Dim appWnd = GetAppWindow
         Dim titleBarHeight = GetTitleBarHeight(appWnd)
 
@@ -110,14 +113,6 @@ Partial Class MainWindow
 
         ConvertingFiles.ItemTemplate = fileTemplate
         LayoutRoot.Children.Add(ConvertingFiles)
-    End Sub
-
-    Private Sub UseRoundCornerdUI()
-        Dim themes As New ResourceDictionary With {
-            .Source = New Uri("ms-appx:///Microsoft.UI.Xaml/Themes/themeresources.xaml")
-        }
-
-        LayoutRoot.Resources.MergedDictionaries.Add(themes)
     End Sub
 
     Private Sub MainWindow_Activated(sender As Object, args As WindowActivatedEventArgs) Handles Me.Activated
