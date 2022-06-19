@@ -3,11 +3,47 @@
 Imports System.Collections.ObjectModel
 Imports System.Runtime.CompilerServices
 Imports System.Threading
+Imports Microsoft.UI
 Imports Microsoft.UI.Xaml
 Imports Windows.ApplicationModel.DataTransfer
 
 Public Class MainWindow
     Inherits Window
+
+    Private ReadOnly _backdrop As BackdropHelper
+
+    Sub New()
+
+        Title = "WinUI 3 VB Demo - H265 mp4 converter"
+
+        InitializeComponent()
+
+        _backdrop = New BackdropHelper(Me)
+        _backdrop.SetBackdrop(BackdropType.Mica)
+
+        TryCustomizeTitleBar()
+    End Sub
+
+    Private Sub TryCustomizeTitleBar()
+        Dim appWnd = GetAppWindow
+        Dim titleBar = appWnd.TitleBar
+        If titleBar IsNot Nothing Then
+            ' Windows 11
+            With appWnd.TitleBar
+                .ExtendsContentIntoTitleBar = True
+                .ButtonBackgroundColor = Colors.Transparent
+            End With
+            Dim titleBarHeight = appWnd.GetTitleBarHeight
+            LayoutRoot.RowDefinitions(0).Height = New GridLength(titleBarHeight + 4, GridUnitType.Pixel)
+        Else
+            ' Windows 10
+            TblTitleText.Visibility = Visibility.Collapsed
+        End If
+    End Sub
+
+    Private Sub MainWindow_Activated(sender As Object, args As WindowActivatedEventArgs) Handles Me.Activated
+        WinUIVbHost.Instance.CurrentWindow = Me
+    End Sub
 
     Private Sub LayoutRoot_DragEnter(sender As Object, e As DragEventArgs) Handles LayoutRoot.DragEnter
         If _convertStatusCode <> ConvertStatusCode.Idle Then

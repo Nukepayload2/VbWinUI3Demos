@@ -11,7 +11,7 @@ Module Program
     Sub Main()
         XamlCheckProcessRequirements
         WinRT.ComWrappersSupport.InitializeComWrappers()
-        Microsoft.UI.Xaml.Application.Start(AddressOf OnAppInit)
+        Application.Start(AddressOf OnAppInit)
     End Sub
 
     Private Sub OnAppInit(p As ApplicationInitializationCallbackParams)

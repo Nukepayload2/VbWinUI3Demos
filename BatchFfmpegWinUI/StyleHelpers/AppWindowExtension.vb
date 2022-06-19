@@ -13,4 +13,15 @@ Public Module AppWindowExtension
         Return AppWindow.GetFromWindowId(myWndId)
     End Function
 
+    <Extension>
+    Public Function GetTitleBarHeight(appWnd As AppWindow) As Integer
+        Dim titleBarHeight = appWnd.TitleBar?.Height
+        If titleBarHeight.GetValueOrDefault = 0 Then
+            ' Sometimes appWnd.TitleBar.Height = 0. Use values from WinForms as fallback.
+            titleBarHeight = System.Windows.Forms.SystemInformation.CaptionHeight
+        End If
+
+        Return titleBarHeight.GetValueOrDefault
+    End Function
+
 End Module
