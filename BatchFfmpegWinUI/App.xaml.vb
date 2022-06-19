@@ -10,19 +10,6 @@ Public Class App
         AppDebugSettings = DebugSettings
     End Sub
 
-    Private _contentLoaded As Boolean
-
-    Public Sub InitializeComponent()
-        If _contentLoaded Then
-            Return
-        End If
-        _contentLoaded = True
-
-        ' If you want to load App.xbf, use App.xaml. Application.xaml points to a non-exist file.
-        Dim resourceLocator As New Uri("ms-appx:///App.xaml")
-        Application.LoadComponent(Me, resourceLocator)
-    End Sub
-
     Private _mWindow As Window
 
     Protected Overrides Sub OnLaunched(args As LaunchActivatedEventArgs)
