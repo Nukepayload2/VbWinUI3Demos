@@ -32,6 +32,12 @@
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.Resources>
+                <TeachingTip x:Name="FileListTip" IsOpen="True"
+                             Target="{Binding ElementName=ConvertingFiles, Path=.}"
+                             Title="Conversion list"
+                             Subtitle="Drag files here"/>
+            </ListBox.Resources>
         </ListBox>
     </Grid>
 </Window>
