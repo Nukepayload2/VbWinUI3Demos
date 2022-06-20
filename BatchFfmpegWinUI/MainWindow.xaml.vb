@@ -22,6 +22,8 @@ Public Class MainWindow
         _backdrop.SetBackdrop(BackdropType.Mica)
 
         TryCustomizeTitleBar()
+
+        FileListTip.Target = ConvertingFiles
     End Sub
 
     Private Sub TryCustomizeTitleBar()
@@ -43,6 +45,9 @@ Public Class MainWindow
 
     Private Sub MainWindow_Activated(sender As Object, args As WindowActivatedEventArgs) Handles Me.Activated
         WinUIVbHost.Instance.CurrentWindow = Me
+        If Not _tipsCompleted Then
+            FileListTip.IsOpen = True
+        End If
     End Sub
 
     Private Sub LayoutRoot_DragEnter(sender As Object, e As DragEventArgs) Handles LayoutRoot.DragEnter
@@ -55,6 +60,7 @@ Public Class MainWindow
 
     Private _fileList As ObservableCollection(Of ConvertibleVideo)
     Private _convertStatusCode As ConvertStatusCode
+    Private _tipsCompleted As Boolean
 
     Private Async Sub LayoutRoot_Drop(sender As Object, e As DragEventArgs) Handles LayoutRoot.Drop
         If _convertStatusCode <> ConvertStatusCode.Idle Then
@@ -67,6 +73,13 @@ Public Class MainWindow
         Try
             Dim droppedItems = Await dataView.GetStorageItemsAsync
             Dim files = GetConvertibleVideos(droppedItems)
+            If files.Count > 0 AndAlso Not _tipsCompleted Then
+                FileListTip.IsOpen = False
+                ConvertTip.Target = BtnConvertStop
+                ConvertTip.IsOpen = True
+                _tipsCompleted = True
+            End If
+
             If _fileList Is Nothing Then
                 _fileList = New ObservableCollection(Of ConvertibleVideo)(files)
                 ConvertingFiles.ItemsSource = _fileList

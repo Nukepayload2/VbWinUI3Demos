@@ -17,7 +17,13 @@
                    Text="{Binding ElementName=FrmMain,Path=Title,Mode=OneWay}" />
         <TextBlock x:Name="ConvertStatus" Margin="4" Grid.Row="1"
                    Text="Ready. Drag and drop mp4 files to add to conversion list." />
-        <Button x:Name="BtnConvertStop" Margin="4" Grid.Row="1" HorizontalAlignment="Right" Content="Convert"/>
+        <Button x:Name="BtnConvertStop" Margin="4" Grid.Row="1" HorizontalAlignment="Right" Content="Convert">
+            <Button.Resources>
+                <TeachingTip x:Name="ConvertTip"
+                             Title="Convert video" PreferredPlacement="BottomLeft"
+                             Subtitle="If you've added ffmpeg to %PATH%, click this button to convert videos."/>
+            </Button.Resources>
+        </Button>
         <ListBox x:Name="ConvertingFiles" Grid.Row="2" Margin="0,4,0,0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -33,10 +39,11 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.Resources>
-                <TeachingTip x:Name="FileListTip" IsOpen="True"
-                             Target="{Binding ElementName=ConvertingFiles, Path=.}"
-                             Title="Conversion list"
-                             Subtitle="Drag files here"/>
+                <TeachingTip x:Name="FileListTip"
+                             Title="Conversion list" PreferredPlacement="Center"
+                             Subtitle="Drag and drop mp4 files here.
+Privacy statement: This program doesn't upload your videos to the Internet.
+These files will be processed locally."/>
             </ListBox.Resources>
         </ListBox>
     </Grid>
