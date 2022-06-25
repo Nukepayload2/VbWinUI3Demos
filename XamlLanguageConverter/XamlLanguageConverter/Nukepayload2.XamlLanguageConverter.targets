@@ -1,0 +1,11 @@
+﻿<Project>
+  
+  <PropertyGroup>
+    <_XamlLanguageConverterToolsFolder Condition=" '$(MSbuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)..\tools\net6.0\</_XamlLanguageConverterToolsFolder>
+    <_XamlLanguageConverterToolsFolder Condition=" '$(_XamlLanguageConverterToolsFolder)' == '' ">$(MSBuildThisFileDirectory)..\tools\net472\</_XamlLanguageConverterToolsFolder>
+    <XamlLanguageConverterTaskPath>$(_XamlLanguageConverterToolsFolder)Nukepayload2.XamlLanguageConverter.dll</XamlLanguageConverterTaskPath>
+  </PropertyGroup>
+  
+  <UsingTask TaskName="Nukepayload2.XamlLanguageConverter.Tasks.ConvertCSharpToVB" AssemblyFile="$(XamlCompilerTaskPath)" />
+
+</Project>
