@@ -6,6 +6,12 @@
     <XamlLanguageConverterTaskPath>$(_XamlLanguageConverterToolsFolder)Nukepayload2.XamlLanguageConverter.dll</XamlLanguageConverterTaskPath>
   </PropertyGroup>
   
+  <!-- VB signature: -->
+  <!-- Function ConvertCSharpToVB(
+           CompileCodeFiles As ItemGroup, 
+           DefinedConstants As ItemGroup, 
+           ReferenceAssemblies As ItemGroup
+       ) As (DeletedCodeFiles As ItemGroup, GeneratedCodeFiles As ItemGroup) -->
   <UsingTask TaskName="Nukepayload2.XamlLanguageConverter.Tasks.ConvertCSharpToVB" AssemblyFile="$(XamlCompilerTaskPath)" />
 
 </Project>

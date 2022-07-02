@@ -1,21 +1,81 @@
+Imports System.IO
 Imports Microsoft.Build.Framework
+Imports Microsoft.CodeAnalysis
 
-Public Class ConvertCSharpToVB
-    Inherits Microsoft.Build.Utilities.Task
+Namespace Tasks
+    Public Class ConvertCSharpToVB
+        Inherits Microsoft.Build.Utilities.Task
 
-    <Required>
-    Public ReadOnly Property ProjectPath As String
+        <Required>
+        Public ReadOnly Property CompileCodeFiles As ITaskItem()
 
-    <Output>
-    Public ReadOnly Property CompileCodeFiles As ITaskItem()
+        <Required>
+        Public ReadOnly Property DefinedConstants As ITaskItem()
 
-    <Output>
-    Public ReadOnly Property ConvertedCodeFiles As ITaskItem()
+        <Required>
+        Public ReadOnly Property ReferenceAssemblies As ITaskItem()
 
-    Public Overrides Function Execute() As Boolean
+        <Output>
+        Public ReadOnly Property DeletedCodeFiles As ITaskItem()
 
-        ' TODO: Call process files in CSharpToVB\Utilities
+        <Output>
+        Public ReadOnly Property GeneratedCodeFiles As ITaskItem()
 
-        Return True
-    End Function
-End Class
+        Public Overrides Function Execute() As Boolean
+
+            Dim references = Aggregate asm In ReferenceAssemblies
+                             Select MetadataReference.CreateFromFile(asm.ItemSpec) Into ToArray
+
+            Dim inputFiles = Aggregate srcFile In CompileCodeFiles
+                             Let sourceFile = srcFile.ItemSpec, fileExt = Path.GetExtension(sourceFile)
+                             Where fileExt?.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)
+                             Select sourceFile Into ToArray
+
+            Dim constGroups = From con In DefinedConstants
+                              Select
+            Iterator Function(definedConstant As String) As IEnumerable(Of KeyValuePair(Of String, Object))
+                If String.IsNullOrWhiteSpace(definedConstant) Then Return
+
+                ' Constants from .NET SDK and C#
+                If Not definedConstant.Contains(","c) AndAlso Not definedConstant.Contains("="c) Then
+                    Yield New KeyValuePair(Of String, Object)(definedConstant, True)
+                End If
+
+                ' VB specific. We don't need to handle them while converting C# to VB.
+
+                Log.LogMessage($"Ignored defined constant(s) '{definedConstant}' while converting C# to VB.")
+            End Function(con.ItemSpec)
+
+            Dim consts = constGroups.SelectMany(Function(s) s).ToList
+
+            Dim vbOption As New DefaultVbOptions("Binary", True, "On", True, "On", True, "On", True)
+
+            Dim deletedFiles As New List(Of ITaskItem)
+            Dim generatedFiles As New List(Of ITaskItem)
+
+            For Each inFile In inputFiles
+                Dim convRequest As New ConvertRequest(False, False, Nothing, Nothing) With {
+                    .SourceCode = File.ReadAllText(inFile)
+                }
+
+                Dim result = ConvertInputRequest(convRequest, vbOption,
+                                 (Aggregate con In consts Select con.Key Into ToList),
+                                 consts, references,
+                                 Sub(err) Log.LogWarning($"Error '{err.GetType.FullName}' while converting C# to VB: {err.Message}"),
+                                  Nothing)
+
+                Dim converted = result.ConvertedCode
+                Dim outFile = String.Concat(inFile.AsSpan(0, inFile.Length - 2), "vb")
+                File.Delete(inFile)
+                deletedFiles.Add(New Microsoft.Build.Utilities.TaskItem(inFile))
+                generatedFiles.Add(New Microsoft.Build.Utilities.TaskItem(outFile))
+            Next
+
+            _DeletedCodeFiles = deletedFiles.ToArray
+            _GeneratedCodeFiles = generatedFiles.ToArray
+
+            Return True
+        End Function
+    End Class
+
+End Namespace

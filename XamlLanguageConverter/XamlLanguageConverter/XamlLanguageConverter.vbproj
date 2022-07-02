@@ -2,13 +2,40 @@
 
   <PropertyGroup>
     <AssemblyName>Nukepayload2.XamlLanguageConverter.Tasks</AssemblyName>
-    <RootNamespace>$(AssemblyName)</RootNamespace>
-    <TargetFrameworks>net6.0;net472</TargetFrameworks>
+    <RootNamespace>Nukepayload2.XamlLanguageConverter</RootNamespace>
+    <TargetNet>net6.0</TargetNet>
+    <TargetNetFramework>net472</TargetNetFramework>
+    <TargetFrameworks>$(TargetNet);$(TargetNetFramework)</TargetFrameworks>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="15.1.1012" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" />
+    <PackageReference Include="Microsoft.Build" Version="15.1.1012" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.1012" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.2.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpToVB-Backports\CodeConverter\CodeConverter.vbproj" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\$(Configuration)\$(TargetNet)\**\*.dll">
+      <PackagePath>tools\$(TargetNet)</PackagePath>
+      <Pack>true</Pack>
+    </None>
+    <None Include="bin\$(Configuration)\$(TargetNetFramework)\**\*.dll">
+      <PackagePath>tools\$(TargetNetFramework)</PackagePath>
+      <Pack>true</Pack>
+    </None>
+    <None Include="Nukepayload2.XamlLanguageConverter.targets">
+      <PackagePath>buildTransitive\$(TargetNet)</PackagePath>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
 </Project>
