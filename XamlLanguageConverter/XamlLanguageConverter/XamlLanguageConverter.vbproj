@@ -8,6 +8,8 @@
     <TargetFrameworks>$(TargetNet);$(TargetNetFramework)</TargetFrameworks>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+    <Authors>Nukepayload2</Authors>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

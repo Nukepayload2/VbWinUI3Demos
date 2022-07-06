@@ -1,0 +1,52 @@
+﻿<Project>
+  
+  <!-- Hooks the following targets: --> 
+  
+  <!-- DesignTimeMarkupCompilationCT, MarkupCompilePass1, MarkupCompilePass2, _OnXamlPreCompileError -->
+  <!-- %UserProfile%\.nuget\packages\microsoft.windowsappsdk\1.1.1\buildTransitive\Microsoft.UI.Xaml.Markup.Compiler.interop.targets -->
+
+  <!-- XamlPreCompile-->
+  <!-- C:\Program Files\Microsoft Visual Studio\2022\Community\Msbuild\Current\Bin\amd64\Microsoft.VisualBasic.CurrentVersion.targets -->
+
+  <PropertyGroup>
+    <_CompileXamlTargets>DesignTimeMarkupCompilationCT;MarkupCompilePass1;MarkupCompilePass2;_OnXamlPreCompileError</_CompileXamlTargets>
+  </PropertyGroup>
+  
+  <Target Name="_WinUI3GenerateCSharpInVBProjects"
+          BeforeTargets="$(_CompileXamlTargets)">
+    <PropertyGroup>
+      <XamlLanguage>C#</XamlLanguage>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_ConvertCSharpToVB" AfterTargets="$(_CompileXamlTargets)">
+    
+    <!-- Sometimes we need ConvertToAbsolutePath to get the full path -->
+    <ConvertCSharpToVB CompileCodeFiles="@(_GeneratedCodeFiles)" 
+                       DefinedConstants="$(DefineConstants)" 
+                       ReferenceAssemblies="@(ReferencePath)">
+      
+      <TaskParameter TaskParameter="DeletedCodeFiles" ItemName="DeletedCodeFiles"/>
+      <TaskParameter TaskParameter="GeneratedCodeFiles" ItemName="GeneratedCodeFiles"/>
+    </ConvertCSharpToVB>
+    
+    <ItemGroup>
+      <Compile Remove="DeletedCodeFiles" />
+      <Compile Include="GeneratedCodeFiles" />
+    </ItemGroup>
+    
+  </Target>
+
+  <Target Name="_RecoverVBCodeGeneration" AfterTargets="$(_CompileXamlTargets)">
+    <PropertyGroup>
+      <XamlLanguage>$(Language)</XamlLanguage>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_SpecifyVBRuntimeForXamlPreCompile" BeforeTargets="XamlPreCompile">
+    <PropertyGroup>
+      <VBRuntime>None</VBRuntime>
+    </PropertyGroup>
+  </Target>
+
+</Project>
