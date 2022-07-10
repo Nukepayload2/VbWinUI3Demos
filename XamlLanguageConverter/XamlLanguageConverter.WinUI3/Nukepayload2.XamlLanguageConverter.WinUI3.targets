@@ -22,12 +22,12 @@
   <Target Name="_ConvertCSharpToVB" AfterTargets="$(_CompileXamlTargets)">
     
     <!-- Sometimes we need ConvertToAbsolutePath to get the full path -->
-    <ConvertCSharpToVB CompileCodeFiles="@(_GeneratedCodeFiles)" 
+    <ConvertCSharpToVB CompileCodeFiles="@(Compile)" 
                        DefinedConstants="$(DefineConstants)" 
                        ReferenceAssemblies="@(ReferencePath)">
-      
-      <TaskParameter TaskParameter="DeletedCodeFiles" ItemName="_DeletedCodeFiles"/>
-      <TaskParameter TaskParameter="GeneratedCodeFiles" ItemName="_GeneratedCodeFiles"/>
+
+      <Output TaskParameter="DeletedCodeFiles" ItemName="_DeletedCodeFiles"/>
+      <Output TaskParameter="GeneratedCodeFiles" ItemName="_GeneratedCodeFiles"/>
     </ConvertCSharpToVB>
     
     <ItemGroup>

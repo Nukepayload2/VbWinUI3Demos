@@ -5,7 +5,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Authors>Nukepayload2</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Version>1.0.0-preview1</Version>
+    <Version>1.0.0-preview4</Version>
+    <PackageId>$(RootNamespace)</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,12 +16,12 @@
   <PropertyGroup>
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <None Include="Nukepayload2.XamlLanguageConverter.WinUI3.targets">
+    <None Include="$(PackageId).targets">
       <PackagePath>buildTransitive\$(TargetFramework)</PackagePath>
       <Pack>true</Pack>
     </None>
   </ItemGroup>
-  
+
 </Project>

@@ -1,9 +1,9 @@
 ﻿<Project>
   
   <PropertyGroup>
-    <_XamlLanguageConverterToolsFolder Condition=" '$(MSbuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)..\tools\net6.0\</_XamlLanguageConverterToolsFolder>
-    <_XamlLanguageConverterToolsFolder Condition=" '$(_XamlLanguageConverterToolsFolder)' == '' ">$(MSBuildThisFileDirectory)..\tools\net472\</_XamlLanguageConverterToolsFolder>
-    <XamlLanguageConverterTaskPath>$(_XamlLanguageConverterToolsFolder)Nukepayload2.XamlLanguageConverter.dll</XamlLanguageConverterTaskPath>
+    <_XamlLanguageConverterToolsFolder Condition=" '$(MSbuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)..\..\tools\net6.0\</_XamlLanguageConverterToolsFolder>
+    <_XamlLanguageConverterToolsFolder Condition=" '$(_XamlLanguageConverterToolsFolder)' == '' ">$(MSBuildThisFileDirectory)..\..\tools\net472\</_XamlLanguageConverterToolsFolder>
+    <XamlLanguageConverterTaskPath>$(_XamlLanguageConverterToolsFolder)Nukepayload2.XamlLanguageConverter.Tasks.dll</XamlLanguageConverterTaskPath>
   </PropertyGroup>
   
   <!-- VB signature: -->
@@ -12,6 +12,6 @@
            DefinedConstants As ItemGroup, 
            ReferenceAssemblies As ItemGroup
        ) As (DeletedCodeFiles As ItemGroup, GeneratedCodeFiles As ItemGroup) -->
-  <UsingTask TaskName="Nukepayload2.XamlLanguageConverter.Tasks.ConvertCSharpToVB" AssemblyFile="$(XamlCompilerTaskPath)" />
+  <UsingTask TaskName="Nukepayload2.XamlLanguageConverter.Tasks.ConvertCSharpToVB" AssemblyFile="$(XamlLanguageConverterTaskPath)" />
 
 </Project>

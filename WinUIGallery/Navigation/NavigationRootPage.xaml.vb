@@ -77,9 +77,9 @@ Namespace AppUIBasics
         End Property
         Public ReadOnly Property AppTitleText As String
             Get
-#If Not UNIVERSAL And DEBUG
-                return "WinUI 3 Gallery Dev";
-#ElseIf Not UNIVERSAL
+#If Not UNIVERSAL And DEBUG Then
+                Return "WinUI 3 Gallery Dev"
+#ElseIf Not UNIVERSAL Then
                 Return "WinUI 3 Gallery"
 #ElseIf DEBUG
                 return "WinUI 3 Gallery Dev (UWP)";

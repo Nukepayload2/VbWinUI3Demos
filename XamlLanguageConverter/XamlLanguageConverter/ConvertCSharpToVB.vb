@@ -7,13 +7,13 @@ Namespace Tasks
         Inherits Microsoft.Build.Utilities.Task
 
         <Required>
-        Public ReadOnly Property CompileCodeFiles As ITaskItem()
+        Public Property CompileCodeFiles As ITaskItem()
 
         <Required>
-        Public ReadOnly Property DefinedConstants As ITaskItem()
+        Public Property DefinedConstants As ITaskItem()
 
         <Required>
-        Public ReadOnly Property ReferenceAssemblies As ITaskItem()
+        Public Property ReferenceAssemblies As ITaskItem()
 
         <Output>
         Public ReadOnly Property DeletedCodeFiles As ITaskItem()

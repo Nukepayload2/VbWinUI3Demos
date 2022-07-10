@@ -10,7 +10,8 @@
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <Authors>Nukepayload2</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Version>1.0.0-preview1</Version>
+    <Version>1.0.0-preview5</Version>
+    <PackageId>$(RootNamespace)</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,7 +37,7 @@
       <PackagePath>tools\$(TargetNetFramework)</PackagePath>
       <Pack>true</Pack>
     </None>
-    <None Include="Nukepayload2.XamlLanguageConverter.targets">
+    <None Include="$(PackageId).targets">
       <PackagePath>buildTransitive\$(TargetNet)</PackagePath>
       <Pack>true</Pack>
     </None>
