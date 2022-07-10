@@ -23,6 +23,10 @@ Namespace Tasks
 
         Public Overrides Function Execute() As Boolean
 
+            Log.LogMessage($"Input parameter '{NameOf(CompileCodeFiles)}'={PrintTaskItem(CompileCodeFiles)}")
+            Log.LogMessage($"Input parameter '{NameOf(DefinedConstants)}'={PrintTaskItem(DefinedConstants)}")
+            Log.LogMessage($"Input parameter '{NameOf(ReferenceAssemblies)}'={PrintTaskItem(ReferenceAssemblies)}")
+
             Dim references = Aggregate asm In ReferenceAssemblies
                              Select MetadataReference.CreateFromFile(asm.ItemSpec) Into ToArray
 
@@ -54,6 +58,9 @@ Namespace Tasks
             Dim generatedFiles As New List(Of ITaskItem)
 
             For Each inFile In inputFiles
+
+                Log.LogMessage($"Converting file '{inFile}'")
+
                 Dim convRequest As New ConvertRequest(False, False, Nothing, Nothing) With {
                     .SourceCode = File.ReadAllText(inFile)
                 }
@@ -74,7 +81,14 @@ Namespace Tasks
             _DeletedCodeFiles = deletedFiles.ToArray
             _GeneratedCodeFiles = generatedFiles.ToArray
 
+            Log.LogMessage($"Output parameter '{NameOf(DeletedCodeFiles)}'={PrintTaskItem(DeletedCodeFiles)}")
+            Log.LogMessage($"Output parameter '{NameOf(GeneratedCodeFiles)}'={PrintTaskItem(GeneratedCodeFiles)}")
+
             Return True
+        End Function
+
+        Private Function PrintTaskItem(compileCodeFiles() As ITaskItem) As String
+            Return String.Join(";"c, From itm In compileCodeFiles Select itm.ItemSpec)
         End Function
     End Class
 

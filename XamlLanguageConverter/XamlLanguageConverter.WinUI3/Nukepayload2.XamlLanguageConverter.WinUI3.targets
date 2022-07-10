@@ -26,13 +26,13 @@
                        DefinedConstants="$(DefineConstants)" 
                        ReferenceAssemblies="@(ReferencePath)">
       
-      <TaskParameter TaskParameter="DeletedCodeFiles" ItemName="DeletedCodeFiles"/>
-      <TaskParameter TaskParameter="GeneratedCodeFiles" ItemName="GeneratedCodeFiles"/>
+      <TaskParameter TaskParameter="DeletedCodeFiles" ItemName="_DeletedCodeFiles"/>
+      <TaskParameter TaskParameter="GeneratedCodeFiles" ItemName="_GeneratedCodeFiles"/>
     </ConvertCSharpToVB>
     
     <ItemGroup>
-      <Compile Remove="DeletedCodeFiles" />
-      <Compile Include="GeneratedCodeFiles" />
+      <Compile Remove="@(_DeletedCodeFiles)" />
+      <Compile Include="@(_GeneratedCodeFiles)" />
     </ItemGroup>
     
   </Target>

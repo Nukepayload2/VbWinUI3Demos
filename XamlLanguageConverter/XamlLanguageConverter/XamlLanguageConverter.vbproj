@@ -10,6 +10,7 @@
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <Authors>Nukepayload2</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Version>1.0.0-preview1</Version>
   </PropertyGroup>
 
   <ItemGroup>
