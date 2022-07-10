@@ -19,6 +19,8 @@ Demonstrates how to use WinUI 3 in Visual Basic .NET projects.
 - Windows 10 21H2 or Windows 11
 
 ## How does it work
+
+### Approach 1: Use the default WinUI VB XAML compiler
 The MSBuild target files of WinUI 3 need some hacking to support Visual Basic.
 VB projects need to import the following target file to use WinUI 3.
 
@@ -43,11 +45,17 @@ VB projects need to import the following target file to use WinUI 3.
 </Project>
 ```
 
+### Approach 2: Use the WinUI C# XAML compiler and code converter
+WIP. See [XamlLanguageConverter](#XamlLanguageConverter).
+
 ## Samples
 ### BatchFfmpegWinUI
 A `mp4` video to `h265` transcoder.
 
 It converts `.mp4` and `.mkv` videos to `h265` encoding by calling `H265.bat`.
+
+#### Status
+Finished. Tested with WinUI3 `v1.1.1` and .NET SDK v6.0.3.
 
 #### How to use it
 - Install `ffmpeg` to `%programfiles%\ffmpeg\bin`. If you have installed it in a different location, please add it to `%PATH%` or edit the path to `ffmpeg` in [H265.bat](BatchFfmpegWinUI_Pack/BatchFfmpegWinUI/H265.bat).
@@ -55,3 +63,15 @@ It converts `.mp4` and `.mkv` videos to `h265` encoding by calling `H265.bat`.
 - Set `BatchFfmpegWinUI_Pack` as startup project and run.
 - Drag and drop `.mp4` or `.mkv` files.
 - Press the "Convert" button and wait.
+
+### XamlLanguageConverter
+Demonstrates how to use MSBuild extension points to invoke the C# XAML compiler and start a [code converter](https://github.com/Nukepayload2/CSharpToVB-Backports) to convert the C# output to VB.
+
+#### Status
+WIP
+
+### WinUIGallery
+A VB version of WinUIGallery `v1.1`. It uses the C# XAML converter until the official VB WinUI3 XAML converter works correctly.
+
+#### Status
+WIP, depends on `XamlLanguageConverter`.
