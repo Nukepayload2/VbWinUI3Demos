@@ -32,7 +32,7 @@
     <PackageReference Include="Microsoft.WinUI" />
     <PackageReference Include="Microsoft.ProjectReunion.InteractiveExperiences.TransportPackage" />
     <Manifest Include="$(ApplicationManifest)" />
-    <PackageReference Include="Nukepayload2.XamlLanguageConverter" Version="1.0.0-preview5" />
+    <PackageReference Include="Nukepayload2.XamlLanguageConverter" Version="1.0.0-preview7" />
     <PackageReference Include="Nukepayload2.XamlLanguageConverter.WinUI3" Version="1.0.0-preview4" />
 
     <!--
@@ -52,7 +52,7 @@
     <PackageReference Update="ColorCode.WinUI" Version="$(ColorCodeVersion)" />
     <PackageReference Update="Microsoft.Graphics.Win2D" Version="$(GraphicsWin2DVersion)" />
     <PackageReference Update="Microsoft.VCRTForwarders.140" Version="1.0.6" />
-    <PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="3.8.0-4.20472.6" />
+    <!--<PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="3.8.0-4.20472.6" />-->
     <PackageReference Update="Microsoft.WinUI" Version="$(WinUIPackageVersion)" Condition="'$(WinUIPackageVersion)' != ''" />
      <!-- Get latest WinRT.Runtime.dll from C#/WinRT -->
     <PackageReference Update="Microsoft.Windows.CsWinRT" Version="$(MicrosoftCsWinRTPackageVersion)" />
