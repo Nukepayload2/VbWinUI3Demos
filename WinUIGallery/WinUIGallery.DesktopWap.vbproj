@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.1" />
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>$(SamplesTargetFrameworkMoniker)</TargetFramework>
+    <DefineConstants>MSIX</DefineConstants>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;arm64</Platforms>
+    <NoWarn>8305</NoWarn>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <EnableMsixTooling>false</EnableMsixTooling>
+    <NoWarn>
+      0108; <!-- 'x' hides inherited member 'y'. Use the new keyword if hiding was intended. -->
+      8305  <!-- 'x' is for evaluation purposes only and is subject to change or removal in future updates. -->
+    </NoWarn>
+    <MSBuildWarningsAsMessages>
+      WMC1501 <!-- x is for evaluation purposes only and is subject to change or removal in future updates. -->
+    </MSBuildWarningsAsMessages>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
+
+  <Import Project="Common.props" />
+
+  <!-- In the WinUI repo, package reference versions are controlled centrally by a Packages.props.  We will
+       just add versionless PackageReferences here.  They will be updated to their actual versions by either the Packages.props file
+       in the WinUI repo, or the next ItemGroup below when standalone. -->
+  <ItemGroup>
+    <PackageReference Include="ColorCode.WinUI" />
+    <PackageReference Include="Microsoft.Graphics.Win2D" />
+    <PackageReference Include="Microsoft.WinUI" />
+    <PackageReference Include="Microsoft.ProjectReunion.InteractiveExperiences.TransportPackage" />
+    <Manifest Include="$(ApplicationManifest)" />
+
+    <!--
+    System.Private.Uri is pulled in transitively through ColorCode.Core and contains vulnerabilities
+    CVE-2019-0657, CVE-2019-0980, and CVE-2019-0981. Since no meta-package depends on version 4.3.2, which
+    addresses those vulnerabilites, we need to pull it in ourselves.
+    -->
+    <PackageReference Include="System.Private.Uri" />
+
+    <!--
+    Explicit C#/WinRT reference to get winrt.runtime v1.2.2; We didn't do SDK update with
+    this version so users run the risk of getting version conflicts with winrt.runtime v1.1
+    from .NET SDK Ref v.13 -->
+    <PackageReference Include="Microsoft.Windows.CsWinRT" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsInWinUIRepo)' != 'true'">
+    <PackageReference Update="ColorCode.WinUI" Version="$(ColorCodeVersion)" />
+    <PackageReference Update="Microsoft.Graphics.Win2D" Version="$(GraphicsWin2DVersion)" />
+    <PackageReference Update="Microsoft.VCRTForwarders.140" Version="1.0.6" />
+    <PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="3.8.0-4.20472.6" />
+    <PackageReference Update="Microsoft.WinUI" Version="$(WinUIPackageVersion)" Condition="'$(WinUIPackageVersion)' != ''" />
+     <!-- Get latest WinRT.Runtime.dll from C#/WinRT -->
+    <PackageReference Update="Microsoft.Windows.CsWinRT" Version="$(MicrosoftCsWinRTPackageVersion)" />
+    <PackageReference Update="System.Private.Uri" Version="4.3.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(ProjectReunionPackageVersion)' != ''">
+    <PackageReference Remove="Microsoft.WinUI" />
+    <PackageReference Remove="Microsoft.ProjectReunion.InteractiveExperiences.TransportPackage" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsInWinUIRepo)' != 'true'">
+    <PackageReference Update="Microsoft.WindowsAppSDK" Version="$(ProjectReunionPackageVersion)" Condition="'$(ProjectReunionPackageVersion)' != ''" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+
+    <Compile Remove="CollectionsInterop.cs" />
+    <Compile Remove="Behaviors\ImageScrollBehavior.cs" />
+    <Compile Remove="ControlPages\MediaPlayerElementPage.xaml.cs" />
+    <Compile Remove="ControlPages\ScrollViewer2Page.xaml.cs" />
+    <Compile Remove="ControlPages\InputValidationPage.xaml.cs" />
+
+    <Page Remove="ControlPages\MediaPlayerElementPage.xaml" />
+    <Page Remove="ControlPages\ScrollViewer2Page.xaml" />
+    <Page Remove="ControlPages\InputValidationPage.xaml" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="ControlPages\MediaPlayerElementPage.xaml" />
+    <Content Remove="@(Content)" />
+  </ItemGroup>
+  <Import Project="ContentIncludes.props" />
+
+</Project>
