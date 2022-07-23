@@ -10,7 +10,7 @@
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <Authors>Nukepayload2</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Version>1.0.0-preview7</Version>
+    <Version>1.0.0-preview15</Version>
     <PackageId>$(RootNamespace)</PackageId>
   </PropertyGroup>
 
@@ -26,8 +26,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CSharpToVB-Backports\CodeConverter\CodeConverter.vbproj" PrivateAssets="all" />
+    <ProjectReference Include="..\CSharpToVB-Backports\ProgressReportLibrary\ProgressReportLibrary.vbproj" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)'=='$(TargetNet)'">
+    <Compile Remove="*.NetFw.vb" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)'=='$(TargetNetFramework)'">
+    <Compile Remove="*.Net.vb" />
+  </ItemGroup>
+  
   <ItemGroup>
     <None Include="bin\$(Configuration)\$(TargetNet)\**\*.dll">
       <PackagePath>tools\$(TargetNet)</PackagePath>

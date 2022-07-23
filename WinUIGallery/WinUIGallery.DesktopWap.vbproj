@@ -32,8 +32,8 @@
     <PackageReference Include="Microsoft.WinUI" />
     <PackageReference Include="Microsoft.ProjectReunion.InteractiveExperiences.TransportPackage" />
     <Manifest Include="$(ApplicationManifest)" />
-    <PackageReference Include="Nukepayload2.XamlLanguageConverter" Version="1.0.0-preview7" />
-    <PackageReference Include="Nukepayload2.XamlLanguageConverter.WinUI3" Version="1.0.0-preview4" />
+    <PackageReference Include="Nukepayload2.XamlLanguageConverter" Version="1.0.0-preview15" />
+    <PackageReference Include="Nukepayload2.XamlLanguageConverter.WinUI3" Version="1.0.0-preview5" />
 
     <!--
     System.Private.Uri is pulled in transitively through ColorCode.Core and contains vulnerabilities

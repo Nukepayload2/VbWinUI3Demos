@@ -7,7 +7,13 @@ Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "XamlLanguageConverter", "Xa
 EndProject
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "CodeConverter", "CSharpToVB-Backports\CodeConverter\CodeConverter.vbproj", "{F3529F3E-1BFD-4BD1-A6C7-5043CE7A7ABA}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "XamlLanguageConverter.WinUI3", "XamlLanguageConverter.WinUI3\XamlLanguageConverter.WinUI3.vbproj", "{9B391C9F-EBA0-4E45-BA9C-58C7BB87F22C}"
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "XamlLanguageConverter.WinUI3", "XamlLanguageConverter.WinUI3\XamlLanguageConverter.WinUI3.vbproj", "{9B391C9F-EBA0-4E45-BA9C-58C7BB87F22C}"
+EndProject
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "ProgressReportLibrary", "CSharpToVB-Backports\ProgressReportLibrary\ProgressReportLibrary.vbproj", "{02BE05A7-5518-437B-B249-CD5F88946131}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObjectPoolLibrary", "CSharpToVB-Backports\ObjectPoolLibrary\ObjectPoolLibrary.csproj", "{3C4BFF73-4FE5-48F4-8839-8FE2E7A813FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeConv", "CodeConv", "{63AD8EA4-969C-4E50-B4D2-09E628273889}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +33,22 @@ Global
 		{9B391C9F-EBA0-4E45-BA9C-58C7BB87F22C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B391C9F-EBA0-4E45-BA9C-58C7BB87F22C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B391C9F-EBA0-4E45-BA9C-58C7BB87F22C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02BE05A7-5518-437B-B249-CD5F88946131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02BE05A7-5518-437B-B249-CD5F88946131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02BE05A7-5518-437B-B249-CD5F88946131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02BE05A7-5518-437B-B249-CD5F88946131}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C4BFF73-4FE5-48F4-8839-8FE2E7A813FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C4BFF73-4FE5-48F4-8839-8FE2E7A813FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C4BFF73-4FE5-48F4-8839-8FE2E7A813FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C4BFF73-4FE5-48F4-8839-8FE2E7A813FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F3529F3E-1BFD-4BD1-A6C7-5043CE7A7ABA} = {63AD8EA4-969C-4E50-B4D2-09E628273889}
+		{02BE05A7-5518-437B-B249-CD5F88946131} = {63AD8EA4-969C-4E50-B4D2-09E628273889}
+		{3C4BFF73-4FE5-48F4-8839-8FE2E7A813FB} = {63AD8EA4-969C-4E50-B4D2-09E628273889}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {666D321E-ED65-44E5-8EC4-0431E7979E2A}
