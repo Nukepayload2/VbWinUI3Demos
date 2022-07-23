@@ -68,7 +68,7 @@ Namespace Tasks
                 Log.LogMessage($"Converting file '{inFile}'")
 
                 Try
-                    Dim outFile = convIsolated.InvokeConverterForFile(inFile)
+                    Dim outFile = convIsolated.ConvertFile(inFile)
                     deletedFilesRaw.Add(inFile)
                     generatedFilesRaw.Add(outFile)
                 Catch ex As Exception
@@ -98,6 +98,12 @@ Namespace Tasks
                 Return s_isolationHelper
             End Get
         End Property
+
+        Private Function ToTaskItemArray(items As IEnumerable(Of String)) As ITaskItem()
+            Return Aggregate item In items
+                   Select New Microsoft.Build.Utilities.TaskItem(item)
+                   Into ToArray
+        End Function
 
     End Class
 

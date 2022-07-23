@@ -26,10 +26,19 @@ Partial Public Class CsVbCodeConverter
 
     Private ReadOnly _vbOption As New DefaultVbOptions("Binary", True, "On", True, "On", True, "On", True)
 
-    Public Function InvokeConverterForFile(csFile As String) As String Implements ICsVbCodeConverter.InvokeConverterForFile
+    Public Function ConvertFile(csFile As String) As String Implements ICsVbCodeConverter.ConvertFile
+        Dim csCode = File.ReadAllText(csFile)
+        Dim vbCode = ConvertSource(csCode)
+        Dim outFile = String.Concat(csFile.AsSpan(0, csFile.Length - 2), "vb")
+        File.WriteAllText(outFile, vbCode)
+        File.Delete(csFile)
+        Return outFile
+    End Function
+
+    Public Function ConvertSource(csCode As String) As String Implements ICsVbCodeConverter.ConvertSource
         Dim convRequest As New ConvertRequest(False, False,
                                               Nothing, Nothing) With {
-            .SourceCode = File.ReadAllText(csFile)
+            .SourceCode = csCode
         }
 
         Dim result = ConvertInputRequest(convRequest, _vbOption,
@@ -38,10 +47,6 @@ Partial Public Class CsVbCodeConverter
                          Sub(err) WarningLog()($"Error '{err.GetType.FullName}' while converting C# to VB: {err.Message}"),
                           Nothing)
 
-        Dim converted = result.ConvertedCode
-        Dim outFile = String.Concat(csFile.AsSpan(0, csFile.Length - 2), "vb")
-        File.Delete(csFile)
-        Return outFile
+        Return result.ConvertedCode
     End Function
-
 End Class

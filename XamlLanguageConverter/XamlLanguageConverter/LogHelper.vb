@@ -4,12 +4,6 @@ Imports Microsoft.CodeAnalysis
 
 Module LogHelper
 
-    Function ToTaskItemArray(items As IEnumerable(Of String)) As ITaskItem()
-        Return Aggregate item In items
-                   Select New Microsoft.Build.Utilities.TaskItem(item)
-                   Into ToArray
-    End Function
-
     Function PrintExceptionAndInnerException(
         ex As Exception,
         Optional exText As StringBuilder = Nothing,
