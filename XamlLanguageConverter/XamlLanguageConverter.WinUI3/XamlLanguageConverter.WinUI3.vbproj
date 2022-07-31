@@ -5,7 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Authors>Nukepayload2</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <Version>1.0.0-preview5</Version>
+    <Version>1.0.0-preview6</Version>
     <PackageId>$(RootNamespace)</PackageId>
   </PropertyGroup>
 

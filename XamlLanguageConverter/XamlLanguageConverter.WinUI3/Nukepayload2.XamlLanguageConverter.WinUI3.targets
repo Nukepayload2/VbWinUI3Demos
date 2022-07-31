@@ -21,9 +21,8 @@
 
   <Target Name="_ConvertCSharpToVB" AfterTargets="$(_CompileXamlTargets)">
     
-    <!-- Sometimes we need ConvertToAbsolutePath to get the full path -->
     <ConvertCSharpToVB CompileCodeFiles="@(Compile)" 
-                       DefinedConstants="$(DefineConstants)" 
+                       DefinedConstants="$(DefineConstants)" Configuration="$(Configuration)"
                        ReferenceAssemblies="@(ReferencePath)">
 
       <Output TaskParameter="DeletedCodeFiles" ItemName="_DeletedCodeFiles"/>

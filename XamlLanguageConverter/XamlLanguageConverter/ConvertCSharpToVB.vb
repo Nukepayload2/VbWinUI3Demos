@@ -1,6 +1,7 @@
 Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports Microsoft.Build.Framework
+Imports Microsoft.Build.Utilities
 Imports Microsoft.CodeAnalysis
 
 Namespace Tasks
@@ -16,6 +17,9 @@ Namespace Tasks
         <Required>
         Public Property ReferenceAssemblies As ITaskItem()
 
+        <Required>
+        Public Property Configuration As String
+
         <Output>
         Public ReadOnly Property DeletedCodeFiles As ITaskItem()
 
@@ -27,6 +31,7 @@ Namespace Tasks
             Log.LogMessage($"Input parameter '{NameOf(CompileCodeFiles)}'={PrintTaskItem(CompileCodeFiles)}")
             Log.LogMessage($"Input parameter '{NameOf(DefinedConstants)}'={PrintTaskItem(DefinedConstants)}")
             Log.LogMessage($"Input parameter '{NameOf(ReferenceAssemblies)}'={PrintTaskItem(ReferenceAssemblies)}")
+            Log.LogMessage($"Input parameter '{NameOf(Configuration)}'={Configuration}")
 
             Dim inputFiles = Aggregate srcFile In CompileCodeFiles
                              Let sourceFile = srcFile.ItemSpec, fileExt = Path.GetExtension(sourceFile)
@@ -50,6 +55,11 @@ Namespace Tasks
             End Function(con.ItemSpec)
 
             Dim consts = constGroups.SelectMany(Function(s) s).ToList
+            If Configuration <> Nothing AndAlso
+                Not (From con In consts
+                     Where String.Equals(con.Key, Configuration, StringComparison.OrdinalIgnoreCase)).Any Then
+                consts.Add(New KeyValuePair(Of String, Object)(Configuration, True))
+            End If
 
             Dim referencesRaw = Aggregate asm In ReferenceAssemblies
                                 Select asm.ItemSpec Into ToArray
@@ -61,7 +71,7 @@ Namespace Tasks
             With convIsolated
                 .References = referencesRaw
                 .DefinedConstants = consts
-                .WarningLog = Sub(text) Log.LogWarning(text)
+                .WarningLog = AddressOf New RemoteWarningLogger(Log).Log
             End With
 
             For Each inFile In inputFiles
@@ -101,10 +111,27 @@ Namespace Tasks
 
         Private Function ToTaskItemArray(items As IEnumerable(Of String)) As ITaskItem()
             Return Aggregate item In items
-                   Select New Microsoft.Build.Utilities.TaskItem(item)
+                   Select New TaskItem(item)
                    Into ToArray
         End Function
 
+        Private Class RemoteWarningLogger
+            Inherits MarshalByRefObject
+
+            Private ReadOnly _log As TaskLoggingHelper
+
+            Public Sub New(log As TaskLoggingHelper)
+                _log = log
+            End Sub
+
+            Sub Log(text As String)
+                _log.LogWarning(text)
+            End Sub
+
+            Public Overrides Function InitializeLifetimeService() As Object
+                Return Nothing
+            End Function
+        End Class
     End Class
 
 End Namespace
