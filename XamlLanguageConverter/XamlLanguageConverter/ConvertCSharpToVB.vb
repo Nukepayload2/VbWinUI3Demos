@@ -20,6 +20,9 @@ Namespace Tasks
         <Required>
         Public Property Configuration As String
 
+        <Required>
+        Public Property UpdateInPlace As String
+
         <Output>
         Public ReadOnly Property DeletedCodeFiles As ITaskItem()
 
@@ -32,6 +35,9 @@ Namespace Tasks
             Log.LogMessage($"Input parameter '{NameOf(DefinedConstants)}'={PrintTaskItem(DefinedConstants)}")
             Log.LogMessage($"Input parameter '{NameOf(ReferenceAssemblies)}'={PrintTaskItem(ReferenceAssemblies)}")
             Log.LogMessage($"Input parameter '{NameOf(Configuration)}'={Configuration}")
+            Log.LogMessage($"Input parameter '{NameOf(UpdateInPlace)}'={UpdateInPlace}")
+
+            Dim inPlace = String.Equals("true", UpdateInPlace, StringComparison.OrdinalIgnoreCase)
 
             Dim inputFiles = Aggregate srcFile In CompileCodeFiles
                              Let sourceFile = srcFile.ItemSpec, fileExt = Path.GetExtension(sourceFile)
@@ -58,7 +64,7 @@ Namespace Tasks
             If Configuration <> Nothing AndAlso
                 Not (From con In consts
                      Where String.Equals(con.Key, Configuration, StringComparison.OrdinalIgnoreCase)).Any Then
-                consts.Add(New KeyValuePair(Of String, Object)(Configuration, True))
+                consts.Add(New KeyValuePair(Of String, Object)(Configuration.ToUpperInvariant, True))
             End If
 
             Dim referencesRaw = Aggregate asm In ReferenceAssemblies
@@ -78,7 +84,7 @@ Namespace Tasks
                 Log.LogMessage($"Converting file '{inFile}'")
 
                 Try
-                    Dim outFile = convIsolated.ConvertFile(inFile)
+                    Dim outFile = convIsolated.ConvertFile(inFile, inPlace)
                     deletedFilesRaw.Add(inFile)
                     generatedFilesRaw.Add(outFile)
                 Catch ex As Exception

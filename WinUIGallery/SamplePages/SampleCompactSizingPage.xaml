@@ -28,11 +28,11 @@
                 <Thickness x:Key="PasswordBoxTopHeaderMargin">0,2,0,2</Thickness>
             </StackPanel.Resources>
             <TextBlock x:Name="HeaderBlock" Text="Compact Size" FontSize="18"/>
-            <TextBox Header="First Name:" x:Name="firstName" />
-            <TextBox Header="Last Name:" x:Name="lastName"  />
-            <PasswordBox Header="Password:" x:Name="password"/>
-            <PasswordBox Header="Confirm Password:" x:Name="confirmPassword"/>
-            <DatePicker Header="Pick a date" x:Name="chosenDate"/>
+            <TextBox Header="First Name:" x:Name="firstName1" />
+            <TextBox Header="Last Name:" x:Name="lastName1"  />
+            <PasswordBox Header="Password:" x:Name="password1"/>
+            <PasswordBox Header="Confirm Password:" x:Name="confirmPassword1"/>
+            <DatePicker Header="Pick a date" x:Name="chosenDate1"/>
         </StackPanel>
     </Grid>
 </Page>

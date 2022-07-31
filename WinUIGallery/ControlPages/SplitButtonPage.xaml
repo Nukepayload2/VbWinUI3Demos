@@ -17,7 +17,7 @@
             <Grid x:Name="Control1" ColumnSpacing="24">
 
                 <SplitButton x:Name="myColorButton" AutomationProperties.Name="Font color" Padding="0" MinHeight="0" MinWidth="0" VerticalAlignment="Top" Click="myColorButton_Click">
-                    <Border x:Name="CurrentColor" Width="{StaticResource SwatchSize}" Height="{StaticResource SwatchSize}" Background="Green" Margin="0" CornerRadius="4,0,0,4"/>
+                    <Border x:Name="currentColor1" Width="{StaticResource SwatchSize}" Height="{StaticResource SwatchSize}" Background="Green" Margin="0" CornerRadius="4,0,0,4"/>
                     <SplitButton.Flyout>
                         <Flyout Placement="Bottom">
                             <GridView ItemClick="GridView_ItemClick" IsItemClickEnabled="True">

@@ -26,12 +26,16 @@ Partial Public Class CsVbCodeConverter
 
     Private ReadOnly _vbOption As New DefaultVbOptions("Binary", True, "On", True, "On", True, "On", True)
 
-    Public Function ConvertFile(csFile As String) As String Implements ICsVbCodeConverter.ConvertFile
+    Public Function ConvertFile(csFile As String, inPlace As Boolean) As String Implements ICsVbCodeConverter.ConvertFile
         Dim csCode = File.ReadAllText(csFile)
         Dim vbCode = ConvertSource(csCode)
-        Dim outFile = String.Concat(csFile.AsSpan(0, csFile.Length - 2), "vb")
+
+        Dim outFile = If(inPlace, csFile, String.Concat(csFile.AsSpan(0, csFile.Length - 2), "vb"))
         File.WriteAllText(outFile, vbCode)
-        File.Delete(csFile)
+        If csFile <> outFile Then
+            File.Delete(csFile)
+        End If
+
         Return outFile
     End Function
 

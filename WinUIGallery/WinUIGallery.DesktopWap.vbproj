@@ -6,6 +6,7 @@
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <DefineConstants>MSIX</DefineConstants>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RootNamespace></RootNamespace>
     <Platforms>x86;x64;arm64</Platforms>
     <NoWarn>8305</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -32,8 +33,8 @@
     <PackageReference Include="Microsoft.WinUI" />
     <PackageReference Include="Microsoft.ProjectReunion.InteractiveExperiences.TransportPackage" />
     <Manifest Include="$(ApplicationManifest)" />
-    <PackageReference Include="Nukepayload2.XamlLanguageConverter" Version="[1.0.0-preview19]" />
-    <PackageReference Include="Nukepayload2.XamlLanguageConverter.WinUI3" Version="1.0.0-preview6" />
+    <PackageReference Include="Nukepayload2.XamlLanguageConverter" Version="[1.0.0-preview21]" />
+    <PackageReference Include="Nukepayload2.XamlLanguageConverter.WinUI3" Version="1.0.0-preview7" />
 
     <!--
     System.Private.Uri is pulled in transitively through ColorCode.Core and contains vulnerabilities

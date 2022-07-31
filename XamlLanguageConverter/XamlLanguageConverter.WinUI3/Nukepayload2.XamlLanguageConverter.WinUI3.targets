@@ -21,7 +21,11 @@
 
   <Target Name="_ConvertCSharpToVB" AfterTargets="$(_CompileXamlTargets)">
     
-    <ConvertCSharpToVB CompileCodeFiles="@(Compile)" 
+    <PropertyGroup>
+      <ConvertCSharpToVBInPlace>True</ConvertCSharpToVBInPlace>
+    </PropertyGroup>
+    
+    <ConvertCSharpToVB CompileCodeFiles="@(Compile)" UpdateInPlace="$(ConvertCSharpToVBInPlace)"
                        DefinedConstants="$(DefineConstants)" Configuration="$(Configuration)"
                        ReferenceAssemblies="@(ReferencePath)">
 
@@ -29,7 +33,8 @@
       <Output TaskParameter="GeneratedCodeFiles" ItemName="_GeneratedCodeFiles"/>
     </ConvertCSharpToVB>
     
-    <ItemGroup>
+    <!-- Has no effect? Temporary use ConvertCSharpToVBInPlace to skip this error. -->
+    <ItemGroup Condition="'$(ConvertCSharpToVBInPlace)' != 'True'">
       <Compile Remove="@(_DeletedCodeFiles)" />
       <Compile Include="@(_GeneratedCodeFiles)" />
     </ItemGroup>
