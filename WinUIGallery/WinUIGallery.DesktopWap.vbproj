@@ -26,8 +26,8 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.4" />
     <!--<PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.6.5" />-->
     
-    <!--<PackageReference Include="Nukepayload2.XamlLanguageConverter" Version="[1.0.0-preview22]" />-->
-    <!--<PackageReference Include="Nukepayload2.XamlLanguageConverter.WinUI3" Version="[1.0.0-preview7]" />-->
+    <PackageReference Include="Nukepayload2.XamlLanguageConverter" Version="[1.0.0-preview22]" />
+    <PackageReference Include="Nukepayload2.XamlLanguageConverter.WinUI3" Version="[1.0.0-preview7]" />
     
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
