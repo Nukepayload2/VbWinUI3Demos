@@ -7,12 +7,6 @@
 ' PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 '
 '*********************************************************
-
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
-
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
 Imports Microsoft.UI.Xaml.Navigation
@@ -30,21 +24,21 @@ Namespace AppUIBasics.ControlPages
     Public NotInheritable Partial Class CommandBarPage
         Inherits Page
         Implements INotifyPropertyChanged
-        Private multipleButtons As Boolean = False
+        Private _multipleButtons As Boolean = False
         Public Property MultipleButtons As Boolean
             Get
-                Return Me.multipleButtons
+                Return _multipleButtons
             End Get
 
             Set(value As Boolean)
-                multipleButtons = value
+                _multipleButtons = value
                 OnPropertyChanged("MultipleButtons")
             End Set
         End Property
 
         Public Event PropertyChanged As PropertyChangedEventHandler Implements ComponentModel.INotifyPropertyChanged.PropertyChanged
         Public Sub OnPropertyChanged(PropertyName As String)
-            PropertyChanged?.Invoke(Me, New PropertyChangedEventArgs(PropertyName))
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(PropertyName))
         End Sub
 
         Public Sub New()

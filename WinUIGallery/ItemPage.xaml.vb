@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports System.Linq
 Imports System.Numerics
@@ -52,9 +48,9 @@ Namespace AppUIBasics
         Public Sub New()
             Me.InitializeComponent()
 
-            LayoutVisualStates.CurrentStateChanged += Sub(s, e) UpdateSeeAlsoPanelVerticalTranslationAnimation()
-            Loaded += Sub(s, e) SetInitialVisuals()
-            Me.Unloaded += Me.ItemPage_Unloaded
+            AddHandler LayoutVisualStates.CurrentStateChanged, Sub(s, e) UpdateSeeAlsoPanelVerticalTranslationAnimation()
+            AddHandler Loaded, Sub(s, e) SetInitialVisuals()
+            AddHandler Unloaded, AddressOf ItemPage_Unloaded
         End Sub
         Private Sub ItemPage_Unloaded(sender As Object, e As RoutedEventArgs)
             ' Notifying the pageheader that this Itempage was unloaded
@@ -158,7 +154,7 @@ Namespace AppUIBasics
                     PageCodeGitHubLink.NavigateUri = New Uri(gitHubBaseURI & pageName & ".cs")
                     PageMarkupGitHubLink.NavigateUri = New Uri(gitHubBaseURI & pageName)
 
-                    Diagnostics.Debug.WriteLine(String.Format("[ItemPage] Navigate to {0}", pageType.ToString()))
+                    Debug.WriteLine(String.Format("[ItemPage] Navigate to {0}", pageType.ToString()))
                     Me.contentFrame.Navigate(pageType)
                 End If
 

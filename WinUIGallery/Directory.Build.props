@@ -24,7 +24,7 @@
   <PropertyGroup Condition="'$(IsInWinUIRepo)' != 'true' AND '$(BuildAllAppFlavors)' == ''">
     <BuildAllAppFlavors>true</BuildAllAppFlavors>
   </PropertyGroup>
-    
+
   <!-- If we aren't building in the WinUI repo, import the necessary missing props we'd normally pick up from its Directory.Build.props hierarchy -->
   <Import Project="Standalone.props" Condition="'$(IsInWinUIRepo)' != 'true'"/>
 </Project>

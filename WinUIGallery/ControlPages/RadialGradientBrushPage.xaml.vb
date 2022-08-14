@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports Microsoft.UI.Xaml.Controls
 Imports Microsoft.UI.Xaml.Media
@@ -23,7 +19,7 @@ Namespace AppUIBasics.ControlPages
         Inherits Page
         Public Sub New()
             Me.InitializeComponent()
-            Loaded += AddressOf OnPageLoaded
+            AddHandler Loaded, AddressOf OnPageLoaded
         End Sub
         Private Sub OnPageLoaded(sender As Object, e As Microsoft.UI.Xaml.RoutedEventArgs)
             AddHandler MappingModeComboBox.SelectionChanged, AddressOf OnMappingModeChanged

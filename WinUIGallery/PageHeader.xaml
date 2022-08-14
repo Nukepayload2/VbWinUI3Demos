@@ -66,7 +66,7 @@
             </Grid>
             <Border x:Name="commandBarBorder" Grid.Column="1" VerticalAlignment="Top">
                 <CommandBar
-                    x:Name="topCommandBar"
+                    x:Name="topCommandBar1"
                     Height="40"
                     Margin="0,0,12,0"
                     Background="Transparent"

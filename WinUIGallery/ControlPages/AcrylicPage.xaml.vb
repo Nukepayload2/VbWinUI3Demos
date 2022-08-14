@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Linq
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
@@ -15,7 +11,7 @@ Namespace AppUIBasics.ControlPages
         Inherits Page
         Public Sub New()
             Me.InitializeComponent()
-            Loaded += AddressOf AcrylicPage_Loaded
+            AddHandler Loaded, AddressOf AcrylicPage_Loaded
         End Sub
         Private Sub AcrylicPage_Loaded(sender As Object, e As RoutedEventArgs)
             ColorSelectorInApp.SelectedIndex = 0

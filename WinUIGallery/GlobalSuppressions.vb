@@ -3,10 +3,6 @@
 ' Project-level suppressions either have no target or are given
 ' a specific target and scoped to a namespace, type, member, etc.
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports System.Diagnostics.CodeAnalysis
 

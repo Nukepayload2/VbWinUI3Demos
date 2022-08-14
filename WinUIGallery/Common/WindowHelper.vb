@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports Microsoft.UI.Xaml
 Imports System.Collections.Generic
@@ -29,9 +25,9 @@ Namespace AppUIBasics
             Return newWindow
         End Function
         Shared Public Sub TrackWindow(window1 As Window)
-            window1.Closed += Sub(sender, args)
-                                  _activeWindows.Remove(window1)
-                              End Sub
+            AddHandler window1.Closed, Sub(sender, args)
+                                           _activeWindows.Remove(window1)
+                                       End Sub
             _activeWindows.Add(window1)
         End Sub
         Shared Public Function GetWindowForElement(element As UIElement) As Window

@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports AppUIBasics.Data
 Imports System
@@ -136,7 +132,7 @@ Namespace AppUIBasics
             Return True
         End Function
         Protected Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = Nothing)
-            PropertyChanged?.Invoke(Me, New PropertyChangedEventArgs(propertyName))
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
         End Sub
     End Class
 End Namespace

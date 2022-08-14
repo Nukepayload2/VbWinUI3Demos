@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports AppUIBasics.Helper
 Imports System
@@ -49,7 +45,7 @@ Namespace AppUIBasics
 
         Public Sub New()
             Me.InitializeComponent()
-            Loaded += AddressOf OnSettingsPageLoaded
+            AddHandler Loaded, AddressOf OnSettingsPageLoaded
 
             If ElementSoundPlayer.State = ElementSoundPlayerState.[On] Then
                 soundToggle.IsOn = True

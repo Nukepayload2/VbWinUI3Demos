@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports AppUIBasics.Data
 Imports System
 Imports Microsoft.UI.Xaml
@@ -20,8 +16,8 @@ Namespace AppUIBasics.Common
         ' Using a DependencyProperty as the backing store for Path.  This enables animation, styling, binding, etc...
         Public Shared ReadOnly SourceProperty As DependencyProperty = DependencyProperty.RegisterAttached("Source", GetType(String), GetType(ImageLoader), New PropertyMetadata(String.Empty, AddressOf OnPropertyChanged))
         Private Async Shared Sub OnPropertyChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
-            Dim TempVar As Boolean = TypeOf d Is Image1
-            Dim image As Image1 = d
+            Dim TempVar As Boolean = TypeOf d Is Image
+            Dim image As Image = d
             If TempVar Then
                 Dim item = Await ControlInfoDataSource.Instance.GetItemAsync(e.NewValue?.ToString())
                 If item?.ImageIconPath IsNot Nothing Then

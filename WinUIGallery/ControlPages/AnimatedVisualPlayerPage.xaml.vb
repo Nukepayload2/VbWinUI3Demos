@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
 
@@ -45,7 +41,7 @@ Namespace AppUIBasics.ControlPages
             Else
                 If Not Player.IsPlaying Then
                     ' Play the animation at the currently specified playback rate.
-                    __ = Player.PlayAsync(fromProgress:=0, toProgress:=1, looped:=False)
+                    Dim x = Player.PlayAsync(fromProgress:=0, toProgress:=1, looped:=False)
                 End If
             End If
         End Sub

@@ -136,7 +136,7 @@
             <GridView.Footer>
                 <Grid x:Name="learnMore" VerticalAlignment="Bottom" Height="200" Margin="16,34,48,0">
                     <StackPanel>
-                        <TextBlock x:Name="LearnMore" Text="Learn More" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,12" />
+                        <TextBlock x:Name="TblLearnMore" Text="Learn More" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,12" />
                         <HyperlinkButton Content="Developer Center" NavigateUri="https://developer.microsoft.com/windows/"/>
                         <HyperlinkButton Content="App Code Samples" NavigateUri="https://docs.microsoft.com/windows/apps/get-started/samples"/>
                         <HyperlinkButton Content="Windows Template Studio" NavigateUri="https://github.com/microsoft/WindowsTemplateStudio"/>

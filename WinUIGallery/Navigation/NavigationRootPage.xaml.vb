@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports AppUIBasics.Common
 Imports AppUIBasics.Data
@@ -40,7 +36,7 @@ Imports Microsoft.UI.Xaml.Media
 Imports Microsoft.UI.Xaml.Navigation
 
 Namespace AppUIBasics
-    Public NotInheritable Partial Class NavigationRootPage
+    Partial Public NotInheritable Class NavigationRootPage
         Inherits Page
         Public ArrowKey As Windows.System.VirtualKey
         Private _navHelper As RootFrameNavigationHelper
@@ -81,7 +77,7 @@ Namespace AppUIBasics
                 Return "WinUI 3 Gallery Dev"
 #ElseIf Not UNIVERSAL Then
                 Return "WinUI 3 Gallery"
-#ElseIf DEBUG
+#ElseIf DEBUG Then
                 return "WinUI 3 Gallery Dev (UWP)";
 #Else
                 return "WinUI 3 Gallery (UWP)";
@@ -101,41 +97,41 @@ Namespace AppUIBasics
             SetDeviceFamily()
             AddNavigationMenuItems()
 
-            Me.GotFocus += Sub(sender As Object, e As RoutedEventArgs)
-                               ' helpful for debugging focus problems w/ keyboard & gamepad
-                               Dim TempVar1 As Boolean = TypeOf FocusManager.GetFocusedElement() Is FrameworkElement
-                               Dim focus As FrameworkElement = FocusManager.GetFocusedElement()
-                               If TempVar1 Then
-                                   Debug.WriteLine("got focus: " & focus.Name & " (" & focus.[GetType]().ToString() & ")")
-                               End If
-                           End Sub
+            AddHandler Me.GotFocus, Sub(sender As Object, e As RoutedEventArgs)
+                                        ' helpful for debugging focus problems w/ keyboard & gamepad
+                                        Dim TempVar1 As Boolean = TypeOf FocusManager.GetFocusedElement() Is FrameworkElement
+                                        Dim focus As FrameworkElement = FocusManager.GetFocusedElement()
+                                        If TempVar1 Then
+                                            Debug.WriteLine("got focus: " & focus.Name & " (" & focus.[GetType]().ToString() & ")")
+                                        End If
+                                    End Sub
             AddHandler Gamepad.GamepadAdded, AddressOf OnGamepadAdded
             AddHandler Gamepad.GamepadRemoved, AddressOf OnGamepadRemoved
 
-#If UNIVERSAL
+#If UNIVERSAL Then
 
             CoreApplication.GetCurrentView().TitleBar.LayoutMetricsChanged += (s, e) => UpdateAppTitle(s);
 
 #End If
 
-            _isKeyboardConnected = Convert.ToBoolean(New KeyboardCapabilities.KeyboardPresent)
+            _isKeyboardConnected = Convert.ToBoolean(New KeyboardCapabilities().KeyboardPresent)
 
             ' remove the solid-colored backgrounds behind the caption controls and system back button if we are in left mode
             ' This is done when the app is loaded since before that the actual theme that is used is not "determined" yet
-            Loaded += Sub(sender As Object, e As RoutedEventArgs)
-                          NavigationOrientationHelper.UpdateTitleBarForElement(NavigationOrientationHelper.IsLeftMode(), Me)
-#If Not UNIVERSAL
+            AddHandler Loaded, Sub(sender As Object, e As RoutedEventArgs)
+                                   NavigationOrientationHelper.UpdateTitleBarForElement(NavigationOrientationHelper.IsLeftMode(), Me)
+#If Not UNIVERSAL Then
 
-                          WindowHelper.GetWindowForElement(Me).Title = AppTitleText
+                                   WindowHelper.GetWindowForElement(Me).Title = AppTitleText
 #End If
 
-                      End Sub
+                               End Sub
 
             NavigationViewControl.RegisterPropertyChangedCallback(NavigationView.PaneDisplayModeProperty, New DependencyPropertyChangedCallback(AddressOf OnPaneDisplayModeChanged))
 
             ' Set the titlebar to be custom. This is also referenced by the TitleBarPage
             App.appTitleBar = AppTitleBar
-#If Not UNIVERSAL
+#If Not UNIVERSAL Then
 
             Dim window1 = App.StartupWindow
             window1.ExtendsContentIntoTitleBar = True
@@ -162,7 +158,7 @@ Namespace AppUIBasics
         End Function
         ' Wraps a call to rootFrame.Navigate to give the Page a way to know which NavigationRootPage is navigating.
         ' Please call this function rather than rootFrame.Navigate to navigate the rootFrame.
-        Public Sub Navigate( _
+        Public Sub Navigate(
             pageType As Type,
             Optional targetPageArguments As Object = Nothing,
             Optional navigationTransitionInfo1 As Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo = Nothing)
@@ -171,7 +167,7 @@ Namespace AppUIBasics
             args.Parameter = targetPageArguments
             rootFrame.Navigate(pageType, args, navigationTransitionInfo1)
         End Sub
-#If WINUI_PRERELEASE
+#If WINUI_PRERELEASE Then
 
         public void App_Resuming()
         {
@@ -218,30 +214,29 @@ Namespace AppUIBasics
         Private Sub AddNavigationMenuItems()
             For Each group In ControlInfoDataSource.Instance.Groups.OrderBy(Function(i) i.Title)
                 Dim itemGroup As New Microsoft.UI.Xaml.Controls.NavigationViewItem() With
-{
+                {
                     .Content = group.Title,
                     .Tag = group.UniqueId,
                     .DataContext = group,
                     .Icon = GetIcon(group.ImageIconPath)}
 
                 Dim groupMenuFlyoutItem As New MenuFlyoutItem() With
-{
+                {
                     .Text = $"Copy Link to {group.Title} Samples",
                     .Icon = New FontIcon() With
-{
+                    {
                         .Glyph = ""},
                     .Tag = group}
-                groupMenuFlyoutItem.Click += Me.OnMenuFlyoutItemClick
-                itemGroup.ContextFlyout = New MenuFlyout() With
-{
-                    .Items = New UnknownTypeTryConvertProject From {
-                        groupMenuFlyoutItem}}
+                AddHandler groupMenuFlyoutItem.Click, AddressOf OnMenuFlyoutItemClick
+                Dim menuFlyout As New MenuFlyout
+                menuFlyout.Items.Add(groupMenuFlyoutItem)
+                itemGroup.ContextFlyout = menuFlyout
 
                 AutomationProperties.SetName(itemGroup, group.Title)
 
                 For Each item In group.Items
                     Dim itemInGroup As New Microsoft.UI.Xaml.Controls.NavigationViewItem() With
-{
+                    {
                         .IsEnabled = item.IncludedInBuild,
                         .Content = item.Title,
                         .Tag = item.UniqueId,
@@ -254,11 +249,10 @@ Namespace AppUIBasics
 {
                             .Glyph = ""},
                         .Tag = item}
-                    itemInGroupMenuFlyoutItem.Click += Me.OnMenuFlyoutItemClick
-                    itemInGroup.ContextFlyout = New MenuFlyout() With
-{
-                        .Items = New UnknownTypeTryConvertProject From {
-                            itemInGroupMenuFlyoutItem}}
+                    AddHandler itemInGroupMenuFlyoutItem.Click, AddressOf OnMenuFlyoutItemClick
+                    Dim menuFlyout1 As New MenuFlyout
+                    menuFlyout1.Items.Add(itemInGroupMenuFlyoutItem)
+                    itemInGroup.ContextFlyout = menuFlyout1
 
                     itemGroup.MenuItems.Add(itemInGroup)
                     AutomationProperties.SetName(itemInGroup, item.Title)
@@ -304,7 +298,7 @@ CType(New BitmapIcon() With
                 .UriSource = New Uri(imagePath, UriKind.RelativeOrAbsolute),
                 .ShowAsMonochrome = False}, IconElement),
 CType(New FontIcon() With
-{ _
+{
             .Glyph = imagePath
 }, IconElement))
         End Function
@@ -366,7 +360,7 @@ CType(New FontIcon() With
             ' Close any open teaching tips before navigation
             CloseTeachingTips()
 
-            If e.SourcePageType = GetType(AllControlsPage) OrElse _
+            If e.SourcePageType = GetType(AllControlsPage) OrElse
                 e.SourcePageType = GetType(NewControlsPage) Then
                 NavigationViewControl.AlwaysShowHeader = False
             Else
@@ -390,17 +384,17 @@ CType(New FontIcon() With
 
                 Dim querySplit = sender.Text.Split(" ")
                 For Each group In ControlInfoDataSource.Instance.Groups
-                    Dim matchingItems = group.Items.Where( _
+                    Dim matchingItems = group.Items.Where(
         Function(item) As Boolean
-                            ' Idea: check for every word entered (separated by space) if it is in the name, 
-                            ' e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button"
-                            ' If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words
-                            Dim flag As Boolean = item.IncludedInBuild
+            ' Idea: check for every word entered (separated by space) if it is in the name, 
+            ' e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button"
+            ' If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words
+            Dim flag As Boolean = item.IncludedInBuild
             For Each queryToken As String In querySplit
-                                ' Check if token is not in string
-                                If item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0 Then
-                                    ' Token is not in string, so we ignore this item.
-                                    flag = False
+                ' Check if token is not in string
+                If item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0 Then
+                    ' Token is not in string, so we ignore this item.
+                    flag = False
                 End If
             Next
             Return flag
@@ -511,7 +505,7 @@ CType(New FontIcon() With
             If ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) Then
                 AppTitle.TranslationTransition = New Vector3Transition
 
-                If (sender.DisplayMode = Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Expanded AndAlso sender.IsPaneOpen) OrElse _
+                If (sender.DisplayMode = Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Expanded AndAlso sender.IsPaneOpen) OrElse
                          sender.DisplayMode = Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Minimal Then
                     AppTitle.Translation = New Numerics.Vector3(smallLeftIndent, 0, 0)
                 Else
@@ -520,7 +514,7 @@ CType(New FontIcon() With
             Else
                 Dim currMargin As Thickness = AppTitle.Margin
 
-                If (sender.DisplayMode = Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Expanded AndAlso sender.IsPaneOpen) OrElse _
+                If (sender.DisplayMode = Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Expanded AndAlso sender.IsPaneOpen) OrElse
                          sender.DisplayMode = Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Minimal Then
                     AppTitle.Margin = New Thickness() With
 {
@@ -595,7 +589,7 @@ CType(New FontIcon() With
 
                                                                              DebugBreak()
 
-                                                                             dispatcherQueue1.TryEnqueue( _
+                                                                             dispatcherQueue1.TryEnqueue(
                                                                                  DispatcherQueuePriority.Low,
                                                                                  New DispatcherQueueHandler(Sub()
                                                                                                                 DebuggerAttachedCheckBox.IsChecked = True

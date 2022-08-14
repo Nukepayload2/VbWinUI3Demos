@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Text
@@ -25,14 +21,14 @@ Namespace AppUIBasics.Common
         ''' <summary>
         ''' Raised when RaiseCanExecuteChanged is called.
         ''' </summary>
-        Public Event CanExecuteChanged As EventHandler Implements Windows.Input.ICommand.CanExecuteChanged
+        Public Event CanExecuteChanged As EventHandler Implements ICommand.CanExecuteChanged
 
         ''' <summary>
         ''' Creates a new command that can always execute.
         ''' </summary>
         ''' <param name="execute">The execution logic.</param>
         Public Sub New(execute As Action)
-            MyBase.New(execute, Nothing)
+            MyClass.New(execute, Nothing)
         End Sub
 
         ''' <summary>
@@ -52,8 +48,8 @@ Namespace AppUIBasics.Common
         ''' Data used by the command. If the command does not require data to be passed, this object can be set to null.
         ''' </param>
         ''' <returns>true if this command can be executed; otherwise, false.</returns>
-        Public Function CanExecute1(parameter As Object) As Boolean Implements Windows.Input.ICommand.CanExecute1
-            Return If(_canExecute Is Nothing, True, _canExecute()())
+        Public Function CanExecute1(parameter As Object) As Boolean Implements ICommand.CanExecute
+            Return If(_canExecute Is Nothing, True, _canExecute())
         End Function
         ''' <summary>
         ''' Executes the <see cref="RelayCommand"/> on the current command target.
@@ -61,7 +57,7 @@ Namespace AppUIBasics.Common
         ''' <param name="parameter">
         ''' Data used by the command. If the command does not require data to be passed, this object can be set to null.
         ''' </param>
-        Public Sub Execute1(parameter As Object) Implements Windows.Input.ICommand.Execute1
+        Public Sub Execute1(parameter As Object) Implements ICommand.Execute
             _execute()
         End Sub
         ''' <summary>
@@ -70,7 +66,7 @@ Namespace AppUIBasics.Common
         ''' method has changed.
         ''' </summary>
         Public Sub RaiseCanExecuteChanged()
-            CanExecuteChanged?.Invoke(Me, EventArgs.Empty)
+            RaiseEvent CanExecuteChanged(Me, EventArgs.Empty)
         End Sub
     End Class
 End Namespace

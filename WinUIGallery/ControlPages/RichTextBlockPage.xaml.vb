@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports System.Collections.Generic
 Imports System.IO
@@ -55,12 +51,10 @@ Namespace AppUIBasics.ControlPages
             .Length = 11
             }
             Dim highlighter As New TextHighlighter() With
-            { _
-            .Background = New SolidColorBrush(color),
-            .Ranges = New UnknownTypeTryConvertProject From {
-                textRange1}
+            {
+            .Background = New SolidColorBrush(color)
             }
-
+            highlighter.Ranges.Add(textRange1)
             ' Switch texthighlighter
             TextHighlightingRichTextBlock.TextHighlighters.Clear()
             TextHighlightingRichTextBlock.TextHighlighters.Add(highlighter)

@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports AppUIBasics.Data
 Imports System.Linq
@@ -40,8 +36,8 @@ Namespace AppUIBasics
         End Sub
         Private Function FormatData() As ObservableCollection(Of GroupInfoList)
             Dim query = From item In Me.Items
-                        Group item By __groupByKey0__ = item.BadgeString Into g
-                        Select New GroupInfoList(g) With {.Key = g.Key}
+                        Group item By item.BadgeString Into g = Group
+                        Select New GroupInfoList(g) With {.Key = BadgeString}
 
             Dim groupList As New ObservableCollection(Of GroupInfoList)(query)
 

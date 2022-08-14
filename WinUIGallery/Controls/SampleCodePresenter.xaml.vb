@@ -7,12 +7,6 @@
 ' PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 '
 '*********************************************************
-
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
-
 Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Text.RegularExpressions
@@ -83,9 +77,8 @@ Namespace AppUIBasics.Controls
             Me.InitializeComponent()
         End Sub
         Private Shared Sub OnDependencyPropertyChanged(target As DependencyObject, args As DependencyPropertyChangedEventArgs)
-            Dim TempVar As Boolean = TypeOf target Is SampleCodePresenter
-            Dim presenter As SampleCodePresenter = target
-            If TempVar Then
+            If TypeOf target Is SampleCodePresenter Then
+                Dim presenter = CType(target, SampleCodePresenter)
                 presenter.ReevaluateVisibility()
             End If
         End Sub
@@ -144,7 +137,7 @@ Namespace AppUIBasics.Controls
         End Sub
         Private Sub FormatAndRenderSampleFromString(sampleString As String, presenter As ContentPresenter, highlightLanguage As ILanguage)
             ' Trim out stray blank lines at start and end.
-            sampleString = sampleString.TrimStart(vbLf).TrimEnd()
+            sampleString = sampleString.TrimStart(ControlChars.Lf).TrimEnd()
 
             ' Also trim out spaces at the end of each line
             sampleString = String.Join(vbLf, sampleString.Split(vbLf).[Select](Function(s) s.TrimEnd()))

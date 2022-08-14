@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Numerics
 Imports Windows.Foundation.Metadata
 Imports Microsoft.UI.Xaml
@@ -32,7 +28,7 @@ Namespace AppUIBasics.ControlPages
             If Not ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) Then
                 Return
             End If
-            Dim customValue As float = EnsureValueIsNumber(OpacityNumberBox)
+            Dim customValue = EnsureValueIsNumber(OpacityNumberBox)
             OpacityRectangle.Opacity = customValue
             OpacityValue.Value = customValue
         End Sub

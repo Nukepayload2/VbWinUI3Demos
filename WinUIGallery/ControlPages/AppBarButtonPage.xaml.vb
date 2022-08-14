@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
@@ -26,8 +22,8 @@ Namespace AppUIBasics.ControlPages
 
         Public Sub New()
             Me.InitializeComponent()
-            Loaded += AddressOf AppBarButtonPage_Loaded
-            Unloaded += AddressOf AppBarButtonPage_Unloaded
+            AddHandler Loaded, AddressOf AppBarButtonPage_Loaded
+            AddHandler Unloaded, AddressOf AppBarButtonPage_Unloaded
         End Sub
         Private Sub AppBarButtonPage_Unloaded(sender As Object, e As RoutedEventArgs)
             Dim appBar As CommandBar = NavigationRootPage.GetForElement(Me).PageHeader.TopCommandBar

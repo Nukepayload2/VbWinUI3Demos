@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
 
@@ -19,8 +15,8 @@ using Microsoft.UI.Xaml.Data;
 Namespace AppUIBasics.ControlPages
     Public NotInheritable Partial Class TreeViewPage
         Inherits Page
-        Private personalFolder As mux.TreeViewNode
-        Private personalFolder2 As mux.TreeViewNode
+        Private personalFolder As TreeViewNode
+        Private personalFolder2 As TreeViewNode
         Private DataSource As ObservableCollection(Of ExplorerItem)
 
         Public Sub New()
@@ -32,43 +28,43 @@ Namespace AppUIBasics.ControlPages
             InitializeSampleTreeView2()
         End Sub
         Private Sub InitializeSampleTreeView()
-            Dim workFolder As New mux.TreeViewNode() With
+            Dim workFolder As New TreeViewNode() With
 {
                 .Content = "Work Documents"}
             workFolder.IsExpanded = True
 
-            workFolder.Children.Add(New mux.TreeViewNode() With
+            workFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "XYZ Functional Spec"})
-            workFolder.Children.Add(New mux.TreeViewNode() With
+            workFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Feature Schedule"})
-            workFolder.Children.Add(New mux.TreeViewNode() With
+            workFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Overall Project Plan"})
-            workFolder.Children.Add(New mux.TreeViewNode() With
+            workFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Feature Resources Allocation"})
 
-            Dim remodelFolder As New mux.TreeViewNode() With
+            Dim remodelFolder As New TreeViewNode() With
 {
                 .Content = "Home Remodel"}
             remodelFolder.IsExpanded = True
 
-            remodelFolder.Children.Add(New mux.TreeViewNode() With
+            remodelFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Contractor Contact Info"})
-            remodelFolder.Children.Add(New mux.TreeViewNode() With
+            remodelFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Paint Color Scheme"})
-            remodelFolder.Children.Add(New mux.TreeViewNode() With
+            remodelFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Flooring woodgrain type"})
-            remodelFolder.Children.Add(New mux.TreeViewNode() With
+            remodelFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Kitchen cabinet style"})
 
-            personalFolder = New mux.TreeViewNode() With
+            personalFolder = New TreeViewNode() With
 {
                 .Content = "Personal Documents"}
             personalFolder.IsExpanded = True
@@ -78,43 +74,43 @@ Namespace AppUIBasics.ControlPages
             sampleTreeView.RootNodes.Add(personalFolder)
         End Sub
         Private Sub InitializeSampleTreeView2()
-            Dim workFolder As New mux.TreeViewNode() With
+            Dim workFolder As New TreeViewNode() With
 {
                 .Content = "Work Documents"}
             workFolder.IsExpanded = True
 
-            workFolder.Children.Add(New mux.TreeViewNode() With
+            workFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "XYZ Functional Spec"})
-            workFolder.Children.Add(New mux.TreeViewNode() With
+            workFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Feature Schedule"})
-            workFolder.Children.Add(New mux.TreeViewNode() With
+            workFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Overall Project Plan"})
-            workFolder.Children.Add(New mux.TreeViewNode() With
+            workFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Feature Resources Allocation"})
 
-            Dim remodelFolder As New mux.TreeViewNode() With
+            Dim remodelFolder As New TreeViewNode() With
 {
                 .Content = "Home Remodel"}
             remodelFolder.IsExpanded = True
 
-            remodelFolder.Children.Add(New mux.TreeViewNode() With
+            remodelFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Contractor Contact Info"})
-            remodelFolder.Children.Add(New mux.TreeViewNode() With
+            remodelFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Paint Color Scheme"})
-            remodelFolder.Children.Add(New mux.TreeViewNode() With
+            remodelFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Flooring woodgrain type"})
-            remodelFolder.Children.Add(New mux.TreeViewNode() With
+            remodelFolder.Children.Add(New TreeViewNode() With
 {
                 .Content = "Kitchen cabinet style"})
 
-            personalFolder2 = New mux.TreeViewNode() With
+            personalFolder2 = New TreeViewNode() With
 {
                 .Content = "Personal Documents"}
             personalFolder2.IsExpanded = True
@@ -123,7 +119,7 @@ Namespace AppUIBasics.ControlPages
             sampleTreeView2.RootNodes.Add(workFolder)
             sampleTreeView2.RootNodes.Add(personalFolder2)
         End Sub
-        Private Sub sampleTreeView_ItemInvoked(sender As mux.TreeView, args As mux.TreeViewItemInvokedEventArgs)
+        Private Sub sampleTreeView_ItemInvoked(sender As TreeView, args As TreeViewItemInvokedEventArgs)
             Return
         End Sub
         Private Function GetData() As ObservableCollection(Of ExplorerItem)
@@ -242,10 +238,9 @@ Namespace AppUIBasics.ControlPages
             End Set
         End Property
         Private Sub NotifyPropertyChanged(propertyName As String)
-            PropertyChanged?.Invoke(Me, New PropertyChangedEventArgs(propertyName))
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
         End Sub
     End Class
-
 
     Class ExplorerItemTemplateSelector
         Inherits DataTemplateSelector

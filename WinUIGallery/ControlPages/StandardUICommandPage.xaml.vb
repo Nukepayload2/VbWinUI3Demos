@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports Windows.Foundation.Metadata
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
@@ -87,11 +83,11 @@ Namespace AppUIBasics.ControlPages
             Dim item As New MenuFlyoutItem() With
 {
                 .Command = data.Command}
-            flyout.Opened += Sub(element As Object, e As Object)
-                                 Dim flyoutElement As MenuFlyout = TryCast(element, MenuFlyout)
-                                 Dim elementToHighlight As ListViewItem = TryCast(flyoutElement.Target, ListViewItem)
-                                 elementToHighlight.IsSelected = True
-                             End Sub
+            AddHandler flyout.Opened, Sub(element As Object, e As Object)
+                                          Dim flyoutElement As MenuFlyout = TryCast(element, MenuFlyout)
+                                          Dim elementToHighlight As ListViewItem = TryCast(flyoutElement.Target, ListViewItem)
+                                          elementToHighlight.IsSelected = True
+                                      End Sub
             flyout.Items.Add(item)
             args.ItemContainer.ContextFlyout = flyout
         End Sub

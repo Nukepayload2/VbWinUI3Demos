@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
@@ -21,7 +17,7 @@ Namespace AppUIBasics.ControlPages
         Inherits Page
         Public Sub New()
             Me.InitializeComponent()
-            Loaded += AddressOf CheckBoxPage_Loaded
+            AddHandler Loaded, AddressOf CheckBoxPage_Loaded
         End Sub
         Private Sub CheckBoxPage_Loaded(sender As Object, e As RoutedEventArgs)
             SetCheckedState()

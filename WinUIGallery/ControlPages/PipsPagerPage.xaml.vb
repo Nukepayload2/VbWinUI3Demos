@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Collections.Generic
 Imports Microsoft.UI.Xaml.Controls
 
@@ -23,13 +19,13 @@ Namespace AppUIBasics.ControlPages
             Me.InitializeComponent()
         End Sub
         Private Sub OrientationComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            Dim orientation As String = e.AddedItems(0).ToString()
+            Dim orientation1 As String = e.AddedItems(0).ToString()
 
-            Select Case orientation
+            Select Case orientation1
                 Case "Vertical"
-                    TestPipsPager2.Orientation = Orientation.Vertical
+                    TestPipsPager2.Orientation = orientation.Vertical
                 Case Else
-                    TestPipsPager2.Orientation = Orientation.Horizontal
+                    TestPipsPager2.Orientation = orientation.Horizontal
             End Select
         End Sub
         Private Sub PrevButtonComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)

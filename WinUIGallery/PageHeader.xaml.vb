@@ -7,12 +7,6 @@
 ' PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 '
 '*********************************************************
-
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
-
 Imports AppUIBasics.Helper
 Imports Microsoft.UI
 Imports Microsoft.UI.Composition

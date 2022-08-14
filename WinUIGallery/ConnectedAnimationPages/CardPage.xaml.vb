@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Collections.Generic
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls

@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Collections
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
@@ -305,11 +301,11 @@ Namespace AppUIBasics.ControlPages
             AnimatedBtnMargin = AnimatedBtn.Margin
         End Sub
         Private Sub SetUIANamesForSelectedEntry(selectedItem1 As Button)
-            Dim TempVar As Boolean = TypeOf LastSelectedColorButton.Content Is String
-            Dim content1 As String
-            String.TryParse(LastSelectedColorButton.Content.ToString, content1)
 
-            If LastSelectedColorButton IsNot Nothing AndAlso TempVar Then
+            If LastSelectedColorButton IsNot Nothing AndAlso
+                TypeOf LastSelectedColorButton.Content Is String Then
+
+                Dim content1 As String = LastSelectedColorButton.Content.ToString
                 AutomationProperties.SetName(LastSelectedColorButton, content1)
             End If
 
@@ -416,7 +412,7 @@ Namespace AppUIBasics.ControlPages
                 If targetIndex <> -1 Then
                     Dim element1 = animatedScrollRepeater.GetOrCreateElement(targetIndex)
                     element1.StartBringIntoView()
-                    TryCast(element, Control).Focus(FocusState.Programmatic)
+                    TryCast(element1, Control).Focus(FocusState.Programmatic)
                     e.Handled = True
                 End If
             End If
@@ -432,10 +428,6 @@ Namespace AppUIBasics.ControlPages
             CategoryItems = catItems
         End Sub
     End Class
-
-
-
-
     Public Class MyDataTemplateSelector
         Inherits DataTemplateSelector
         Public Property Normal As DataTemplate
@@ -540,7 +532,7 @@ Namespace AppUIBasics.ControlPages
                 inner.AddRange(collection)
             End If
 
-            CollectionChanged?.Invoke(Me, New NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset))
+            RaiseEvent CollectionChanged(Me, New NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset))
         End Sub
 #Region "IReadOnlyList<T>"
         Public ReadOnly Property Count As Integer Implements Collections.ICollection.Count
@@ -570,10 +562,10 @@ Namespace AppUIBasics.ControlPages
 
 #Region "IKeyIndexMapping"
 
-        Public Function KeyFromIndex(index As Integer) As String
+        Public Function KeyFromIndex(index As Integer) As String Implements IKeyIndexMapping.KeyFromIndex
             Return inner(index).Num.ToString()
         End Function
-        Public Function IndexFromKey(key As String) As Integer
+        Public Function IndexFromKey(key As String) As Integer Implements IKeyIndexMapping.IndexFromKey
             For Each item As Recipe In inner
                 If item.Num.ToString() = key Then
                     Return inner.IndexOf(item)

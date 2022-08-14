@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
@@ -135,7 +131,7 @@ Namespace AppUIBasics.ControlPages
             ' Since selecting an item will also change the text,
             ' only listen to changes caused by user entering text.
             If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
-                Dim suitableItems As Collections.Generic.List(Of String) = New List(Of String)
+                Dim suitableItems As List(Of String) = New List(Of String)
                 Dim splitText = sender.Text.ToLower().Split(" ")
                 For Each cat As String In Cats
                     Dim found As Boolean = splitText.All(Function(key) As Boolean
@@ -165,7 +161,7 @@ Namespace AppUIBasics.ControlPages
             'otherwise we assume the value got filled in by TextMemberPath
             'or the handler for SuggestionChosen
             If args.Reason = AutoSuggestionBoxTextChangeReason.UserInput Then
-                Dim suggestions As Collections.Generic.List(Of ControlInfoDataItem) = SearchControls(sender.Text)
+                Dim suggestions As List(Of ControlInfoDataItem) = SearchControls(sender.Text)
 
                 If suggestions.Count > 0 Then
                     sender.ItemsSource = suggestions
@@ -188,7 +184,7 @@ Namespace AppUIBasics.ControlPages
                 SelectControl(TryCast(args.ChosenSuggestion, ControlInfoDataItem))
             ElseIf Not String.IsNullOrEmpty(args.QueryText) Then
                 'Do a fuzzy search based on the text
-                Dim suggestions As Collections.Generic.List(Of ControlInfoDataItem) = SearchControls(sender.Text)
+                Dim suggestions As List(Of ControlInfoDataItem) = SearchControls(sender.Text)
                 If suggestions.Count > 0 Then
                     SelectControl(suggestions.FirstOrDefault())
                 End If
@@ -225,7 +221,7 @@ Namespace AppUIBasics.ControlPages
             End If
         End Sub
         Private Function SearchControls(query As String) As List(Of ControlInfoDataItem)
-            Dim suggestions As Collections.Generic.List(Of ControlInfoDataItem) = New List(Of ControlInfoDataItem)
+            Dim suggestions As List(Of ControlInfoDataItem) = New List(Of ControlInfoDataItem)
 
             Dim querySplit As String() = query.Split(" ")
             For Each group In ControlInfoDataSource.Instance.Groups

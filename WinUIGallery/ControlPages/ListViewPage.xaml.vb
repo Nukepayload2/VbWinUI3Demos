@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports AppUIBasics.Data
 Imports System
@@ -356,7 +352,7 @@ Namespace AppUIBasics.ControlPages
         End Function
         Public Shared Async Function GetContactsGroupedAsync() As Task(Of ObservableCollection(Of GroupInfoList))
             Dim query As Collections.Generic.IEnumerable(Of AppUIBasics.ControlPages.GroupInfoList) = From item In Await GetContactsAsync()
-                                                                                                      Group item By __groupByKey0__ = item.LastName.Substring(0, 1).ToUpper() Into g Select New GroupInfoList(g) With {.Key = g.Key}
+                                                                                                      Group item By __groupByKey0__ = item.LastName.Substring(0, 1).ToUpper() Into g = Group Select New GroupInfoList(g) With {.Key = __groupByKey0__}
 
             Return New ObservableCollection(Of GroupInfoList)(query)
         End Function

@@ -1,11 +1,5 @@
 ' Copyright (c) Microsoft Corporation. All rights reserved.
 ' Licensed under the MIT License. See LICENSE in the project root for license information.
-
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
-
 Imports System.Runtime.InteropServices
 Imports System.Threading
 Imports Windows.ApplicationModel.Core
@@ -90,14 +84,14 @@ Namespace AppUIBasics
 
             Return threadId
         End Function
-        Private Shared instance As IdleSynchronizer = Nothing
+        Private Shared s_instance As IdleSynchronizer = Nothing
         Public Shared ReadOnly Property Instance As IdleSynchronizer
             Get
-                If instance Is Nothing Then
+                If s_instance Is Nothing Then
                     Throw New Exception("Init() must be called on the UI thread before retrieving Instance.")
                 End If
 
-                Return Me.instance
+                Return s_instance
             End Get
         End Property
 
@@ -123,7 +117,7 @@ Namespace AppUIBasics
                 Throw New Exception("Init() must be called on the UI thread.")
             End If
 
-            instance = New IdleSynchronizer(dispatcherQueue1)
+            s_instance = New IdleSynchronizer(dispatcherQueue1)
         End Sub
         Public Shared Sub Wait()
             Dim logMessage As String
@@ -144,7 +138,7 @@ Namespace AppUIBasics
             Return Instance.WaitInternal(logMessage)
         End Function
         Public Sub AddLog(message As String)
-            Diagnostics.Debug.WriteLine(message)
+            Debug.WriteLine(message)
 
             If Log IsNot Nothing AndAlso Log <> "LOG: " Then
                 Log &= "; "
@@ -276,11 +270,11 @@ Namespace AppUIBasics
             Dim tickHandler As TypedEventHandler(Of DispatcherQueueTimer, Object) = Nothing
 
             tickHandler = Sub(sender, args)
-                              timer.Tick -= tickHandler
+                              RemoveHandler timer.Tick, tickHandler
                               shouldContinueEvent.[Set]()
                           End Sub
 
-            timer.Tick += tickHandler
+            AddHandler timer.Tick, tickHandler
 
             timer.Start()
             shouldContinueEvent.WaitOne(s_defaultWaitForEventMs)
@@ -412,10 +406,10 @@ Namespace AppUIBasics
             Return String.Empty
         End Function
         Private Sub SynchronouslyTickUIThread(ticks As UInteger)
-            For i As UInteger = 0 To ticks - 1
+            For i As UInteger = 0 To ticks - 1UI
                 Dim tickCompleteEvent As New AutoResetEvent(False)
 
-                m_dispatcherQueue.TryEnqueue( _
+                m_dispatcherQueue.TryEnqueue(
                     DispatcherQueuePriority.Normal,
                     New DispatcherQueueHandler(Sub()
                                                    Dim renderingHandler As EventHandler(Of Object) = Nothing

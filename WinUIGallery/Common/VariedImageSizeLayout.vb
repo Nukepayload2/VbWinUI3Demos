@@ -1,10 +1,6 @@
 ' Copyright (c) Microsoft Corporation. All rights reserved.
 ' Licensed under the MIT License. See LICENSE in the project root for license information.
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports System.Collections.Generic
 Imports System.Collections.Specialized

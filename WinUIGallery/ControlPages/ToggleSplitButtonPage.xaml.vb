@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports Microsoft.UI.Text
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Automation
@@ -17,13 +13,13 @@ Namespace AppUIBasics.ControlPages
         End Sub
         Private Sub BulletButton_Click(sender As Object, e As RoutedEventArgs)
             Dim clickedBullet As Button = CType(sender, Button)
-            Dim symbol As SymbolIcon = CType(clickedBullet.Content, SymbolIcon)
+            Dim symbol1 As SymbolIcon = CType(clickedBullet.Content, SymbolIcon)
 
-            If symbol.Symbol = Symbol.List Then
+            If symbol1.Symbol = Symbol.List Then
                 _type = MarkerType.Bullet
                 mySymbolIcon.Symbol = Symbol.List
                 myListButton.SetValue(AutomationProperties.NameProperty, "Bullets")
-            ElseIf symbol.Symbol = Symbol.Bullets Then
+            ElseIf symbol1.Symbol = Symbol.Bullets Then
                 _type = MarkerType.UppercaseRoman
                 mySymbolIcon.Symbol = Symbol.Bullets
                 myListButton.SetValue(AutomationProperties.NameProperty, "Roman Numerals")

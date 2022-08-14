@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
@@ -114,8 +110,8 @@ Namespace AppUIBasics.ControlPages
             End If
         End Sub
         Private Sub ContentGridView_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            Dim TempVar As Boolean = TypeOf sender Is GridView1
-            Dim gridView As GridView1 = sender
+            Dim TempVar As Boolean = TypeOf sender Is GridView
+            Dim gridView As GridView = sender
             If TempVar Then
                 SelectionOutput.Text = String.Format("You have selected {0} item(s).", gridView.SelectedItems.Count)
             End If

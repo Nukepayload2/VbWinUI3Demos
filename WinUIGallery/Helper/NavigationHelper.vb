@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Text
@@ -125,12 +121,12 @@ Namespace AppUIBasics.Helper
                 End While
 
                 ' Pass the navigation parameter to the new page
-                Me.LoadState?.Invoke(Me, New LoadStateEventArgs(e.Parameter, Nothing))
+                RaiseEvent LoadState(Me, New LoadStateEventArgs(e.Parameter, Nothing))
             Else
                 ' Pass the navigation parameter and preserved page state to the page, using
                 ' the same strategy for loading suspended state and recreating pages discarded
                 ' from cache
-                Me.LoadState?.Invoke(Me, New LoadStateEventArgs(e.Parameter, CType(frameState(Me._pageKey), Dictionary(Of String, Object))))
+                RaiseEvent LoadState(Me, New LoadStateEventArgs(e.Parameter, CType(frameState(Me._pageKey), Dictionary(Of String, Object))))
             End If
         End Sub
         ''' <summary>
@@ -143,7 +139,7 @@ Namespace AppUIBasics.Helper
         Public Sub OnNavigatedFrom(e As NavigationEventArgs)
             Dim frameState = SuspensionManager.SessionStateForFrame(Me.Frame)
             Dim pageState As Collections.Generic.Dictionary(Of String, Object) = New Dictionary(Of String, Object)
-            Me.SaveState?.Invoke(Me, New SaveStateEventArgs(pageState))
+            RaiseEvent SaveState(Me, New SaveStateEventArgs(pageState))
             frameState(_pageKey) = pageState
         End Sub
 
@@ -185,10 +181,10 @@ Namespace AppUIBasics.Helper
         ''' This reference allows for frame manipulation and to register navigation handlers.</param>
         Public Sub New(rootFrame As Frame, currentNavView1 As Microsoft.UI.Xaml.Controls.NavigationView)
             Me.Frame = rootFrame
-            Me.Frame.Navigated += Sub(s, e)
-                                      ' Update the Back button whenever a navigation occurs.
-                                      UpdateBackButton()
-                                  End Sub
+            AddHandler Me.Frame.Navigated, Sub(s, e)
+                                               ' Update the Back button whenever a navigation occurs.
+                                               UpdateBackButton()
+                                           End Sub
             Me.CurrentNavView = currentNavView1
 
 #If UNIVERSAL

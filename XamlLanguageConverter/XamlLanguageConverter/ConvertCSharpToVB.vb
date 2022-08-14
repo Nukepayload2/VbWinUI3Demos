@@ -1,5 +1,6 @@
 Imports System.IO
 Imports System.Runtime.CompilerServices
+Imports System.Runtime.InteropServices
 Imports Microsoft.Build.Framework
 Imports Microsoft.Build.Utilities
 Imports Microsoft.CodeAnalysis
@@ -31,6 +32,7 @@ Namespace Tasks
 
         Public Overrides Function Execute() As Boolean
 
+            Log.LogMessage($"Running converter in {RuntimeInformation.FrameworkDescription}")
             Log.LogMessage($"Input parameter '{NameOf(CompileCodeFiles)}'={PrintTaskItem(CompileCodeFiles)}")
             Log.LogMessage($"Input parameter '{NameOf(DefinedConstants)}'={PrintTaskItem(DefinedConstants)}")
             Log.LogMessage($"Input parameter '{NameOf(ReferenceAssemblies)}'={PrintTaskItem(ReferenceAssemblies)}")

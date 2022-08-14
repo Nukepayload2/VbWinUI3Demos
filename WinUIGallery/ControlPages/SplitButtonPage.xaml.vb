@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports Microsoft.UI
 Imports Microsoft.UI.Text
 Imports Microsoft.UI.Xaml
@@ -28,13 +24,13 @@ Namespace AppUIBasics.ControlPages
             Dim rect = CType(e.ClickedItem, Rectangle)
             Dim color1 = CType(rect.Fill, SolidColorBrush).Color
             myRichEditBox.Document.Selection.CharacterFormat.ForegroundColor = color1
-            CurrentColor.Background = New SolidColorBrush(color1)
+            currentColor1.Background = New SolidColorBrush(color1)
 
             myRichEditBox.Focus(Microsoft.UI.Xaml.FocusState.Keyboard)
             currentColor = color1
 
             ' Delay required to circumvent GridView bug: https://github.com/microsoft/microsoft-ui-xaml/issues/6350
-            Task.Delay(10).ContinueWith(Function() myColorButton.Flyout.Hide(), TaskScheduler.FromCurrentSynchronizationContext())
+            Task.Delay(10).ContinueWith(Sub() myColorButton.Flyout.Hide(), TaskScheduler.FromCurrentSynchronizationContext())
         End Sub
         Private Sub RevealColorButton_Click(sender As Object, e As RoutedEventArgs)
             myColorButtonReveal.Flyout.Hide()

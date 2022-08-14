@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports Windows.ApplicationModel.Core
 Imports Windows.ApplicationModel.DataTransfer
 Imports Windows.Foundation.Metadata
@@ -22,7 +18,7 @@ Namespace AppUIBasics.TabViewPages
             Me.InitializeComponent()
             AddHandler Tabs.TabItemsChanged, AddressOf Tabs_TabItemsChanged
 
-            Loaded += AddressOf TabViewWindowingSamplePage_Loaded
+            AddHandler Loaded, AddressOf TabViewWindowingSamplePage_Loaded
         End Sub
         Private Sub TabViewWindowingSamplePage_Loaded(sender As Object, e As RoutedEventArgs)
             Dim currentWindow = WindowHelper.GetWindowForElement(Me)

@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
@@ -42,8 +38,8 @@ Namespace AppUIBasics.ControlPages
             Dim TempVar1 As Boolean = TypeOf sender Is RadioButton
             Dim rb As RadioButton = sender
             If TempVar1 AndAlso Control1 IsNot Nothing Then
-                Dim stretch As String = rb.Tag.ToString()
-                Select Case stretch
+                Dim stretch1 As String = rb.Tag.ToString()
+                Select Case stretch1
                     Case "None"
                         Control1.Stretch = Stretch.None
                     Case "Fill"

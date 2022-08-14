@@ -1,8 +1,4 @@
 ' To configure or remove Option's included in result, go to Options/Advanced Options...
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Linq
@@ -45,7 +41,7 @@ Namespace AppUIBasics.ControlPages
             AddItemsToContentListView(True)
         End Sub
         Private Sub AddItemsToContentListView(Optional ShowDifferentContent As Boolean = False)
-            Dim items1 As Collections.Generic.List(Of String) = New List(Of String)
+            Dim items1 As List(Of String) = New List(Of String)
             For i As Integer = 0 To 5 - 1
                 items1.Add(If(ShowDifferentContent, "Updated content " & i, "Item " & i))
             Next

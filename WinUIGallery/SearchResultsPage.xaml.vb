@@ -8,10 +8,6 @@
 '
 '*********************************************************
 
-Option Compare Text
-Option Explicit On
-Option Infer Off
-Option Strict On
 
 Imports AppUIBasics.Common
 Imports AppUIBasics.Data
@@ -235,7 +231,7 @@ Namespace AppUIBasics
         ''' value is optional and can be provided automatically when invoked from compilers
         ''' that support <see cref="CallerMemberNameAttribute"/>.</param>
         Private Sub NotifyPropertyChanged(<CallerMemberName> Optional propertyName As String = Nothing)
-            Me.PropertyChanged?.Invoke(Me, New PropertyChangedEventArgs(propertyName))
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
         End Sub
     End Class
 End Namespace
