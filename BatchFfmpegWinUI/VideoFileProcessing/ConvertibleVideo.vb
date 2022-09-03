@@ -3,10 +3,18 @@
 Public Class ConvertibleVideo
     Implements INotifyPropertyChanged
 
-    Public Property Path As String
-    Public Property Output As String
+    Public Sub New(path As String, output As String, formatName As String)
+        Me.Path = path
+        Me.Output = output
+        Me.FormatName = formatName
+    End Sub
+
+    Public ReadOnly Property Path As String
+    Public ReadOnly Property Output As String
+    Public ReadOnly Property FormatName As String
 
     Dim _Icon As String = ChrW(&HE916)
+
     Public Property Icon As String
         Get
             Return _Icon

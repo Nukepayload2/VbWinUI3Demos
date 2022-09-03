@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:BatchFfmpegWinUI"
     mc:Ignorable="d">
 
     <Grid x:Name="LayoutRoot" AllowDrop="True" Margin="4">
@@ -19,8 +20,13 @@
                    Text="Ready. Drag and drop mp4 files to add to conversion list." />
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
             <ComboBox x:Name="CmbCurFormat" SelectedIndex="0" VerticalAlignment="Center">
-                <ComboBoxItem Content="H265"/>
-                <ComboBoxItem Content="AV1"/>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock><Run Text="{Binding Path=Name,Mode=OneTime}"/> - <Run Text="{Binding Path=Description,Mode=OneTime}"/></TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <local:VideoFormatReference Name="H265" Description="Fast, medium compression ratio, uses NVIDIA GPU"/>
+                <local:VideoFormatReference Name="AV1" Description="Extremely slow, high compression ratio, uses CPU"/>
             </ComboBox>
             <Button x:Name="BtnConvertStop" Margin="4" Content="Convert" VerticalAlignment="Center">
                 <Button.Resources>
@@ -37,11 +43,23 @@
                     <Grid Margin="0,4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="32"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                  Glyph="{Binding Path=Icon, Mode=OneWay}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Path=Path, Mode=OneTime}"/>
+                                  Glyph="{Binding Path=Icon, Mode=OneWay}" Grid.RowSpan="2"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Path=FormatName, Mode=OneTime}" 
+                                   VerticalAlignment="Center" FontWeight="Bold"
+                                   FontSize="{ThemeResource SubtitleTextBlockFontSize}" 
+                                   Grid.RowSpan="2"/>
+                        <TextBlock Grid.Column="2" Margin="8,0,0,0" Text="{Binding Path=Path, Mode=OneTime}"/>
+                        <TextBlock Grid.Column="2" Margin="8,0,0,0" Grid.Row="1">
+                            → <Run Text="{Binding Path=Output, Mode=OneTime}"/>
+                        </TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -21,12 +21,16 @@ Module VideoConverter
         Return files
     End Function
 
+    Private Const IconOk As Char = ChrW(&HE001)
+    Private Const IconExclamation As Char = ChrW(&HE171)
+    Private Const IconProcessing As Char = ChrW(&HE768)
+
     Async Function ConvertAsync(fileList As IReadOnlyList(Of ConvertibleVideo),
                           statusCallback As Action(Of String),
                           cancelToken As Threading.CancellationToken,
-                          softStop As StrongBox(Of Boolean),
-                          formatName As String) As Task(Of Boolean)
+                          softStop As StrongBox(Of Boolean)) As Task(Of Boolean)
 
+        Dim errToPrompt As String = Nothing
         Dim success = False
         Try
             Dim index = 1
@@ -36,16 +40,16 @@ Module VideoConverter
                 statusCallback($"Converting {index}/{fileList.Count}")
                 If File.Exists(vidFile.Output) Then
                     index += 1
-                    vidFile.Icon = ChrW(&HE001)
+                    vidFile.Icon = IconOk
                     Continue For
                 End If
 
-                vidFile.Icon = ChrW(&HE768)
+                vidFile.Icon = IconProcessing
 
                 Dim procStart As New ProcessStartInfo With {
                     .UseShellExecute = False,
                     .FileName = "cmd",
-                    .Arguments = $"/c {formatName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
+                    .Arguments = $"/c {vidFile.FormatName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
                     .CreateNoWindow = True,
                     .RedirectStandardOutput = True,
                     .RedirectStandardError = True
@@ -60,12 +64,30 @@ Module VideoConverter
                     Dim stdErrTask = proc.StandardError.ReadToEndAsync(cancelToken)
                     Dim stdOutTask = proc.StandardOutput.ReadToEndAsync(cancelToken)
                     Await Task.WhenAll(stdErrTask, stdOutTask).WaitAsync(cancelToken)
-                    ThrowForExternalException(proc, stdErrTask.Result, stdOutTask.Result)
+
+                    If proc.ExitCode <> 0 Then
+                        Dim stdErr = stdErrTask.Result, stdOut = stdOutTask.Result
+                        Dim errMsg = String.Empty
+                        If stdErr <> Nothing Then
+                            errMsg = "Error: " & stdErr.Trim
+                        End If
+                        If stdOut <> Nothing Then
+                            If errMsg.Length > 0 Then errMsg &= Environment.NewLine
+                            errMsg &= "Output: " & stdOut.Trim
+                        End If
+                        errToPrompt = errMsg
+                    End If
+
+                    ThrowForExternalException(proc)
                 Catch ex As TaskCanceledException
                     killingEx = ex
+                Catch ex As Exception
+                    vidFile.Icon = IconExclamation
+                    Throw
                 End Try
 
                 If killingEx IsNot Nothing Then
+                    vidFile.Icon = IconExclamation
                     statusCallback("Cleaning canceled file...")
                     proc.Kill(True)
                     Dim convertedPath = vidFile.Output
@@ -75,7 +97,7 @@ Module VideoConverter
 
                 timer.Stop()
 
-                vidFile.Icon = ChrW(&HE001)
+                vidFile.Icon = IconOk
 
                 If index < fileList.Count - 1 Then
                     cancelToken = Await PreventOverheatAsync(statusCallback, timer, cancelToken, softStop)
@@ -104,23 +126,19 @@ Module VideoConverter
             statusCallback($"Error {ex.GetType.Name}: {ex.Message}")
         End Try
 
+        If errToPrompt IsNot Nothing Then
+            Await ShowFfmpegError(errToPrompt)
+        End If
+
         Return success
     End Function
 
-    Private Sub ThrowForExternalException(proc As Process, stdErr As String, stdOut As String)
+    Private Sub ThrowForExternalException(proc As Process)
         If proc.ExitCode = 0 Then
             Return
         End If
 
-        Dim errMsg = String.Empty
-        If stdErr <> Nothing Then
-            errMsg = "Error: " & stdErr.Trim
-        End If
-        If stdOut <> Nothing Then
-            If errMsg.Length > 0 Then errMsg &= Environment.NewLine
-            errMsg &= "Output: " & stdOut.Trim
-        End If
-        Throw New Win32Exception($"Call ffmpeg failed. {Environment.NewLine}{errMsg}")
+        Throw New Win32Exception($"Call ffmpeg failed. Exit code {proc.ExitCode}")
     End Sub
 
     Private Async Function DeleteFileWithRetryAsync(convertedPath As String) As Task
@@ -178,7 +196,7 @@ Module VideoConverter
         If nameNoExt.EndsWith($"_{activeFormatName}", StringComparison.OrdinalIgnoreCase) Then Return
 
         Dim convertedPath = GetConvertedPath(name, dirName, activeFormatName)
-        files.Add(New ConvertibleVideo With {.Path = filePath, .Output = convertedPath})
+        files.Add(New ConvertibleVideo(filePath, convertedPath, activeFormatName))
     End Sub
 
     Private Function GetConvertedPath(name As String,

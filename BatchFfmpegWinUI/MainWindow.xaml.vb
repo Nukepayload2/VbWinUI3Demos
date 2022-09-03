@@ -106,7 +106,7 @@ Public Class MainWindow
     End Sub
 
     Private Function GetActiveFormatName() As String
-        Return If(TryCast(TryCast(CmbCurFormat.SelectedItem, ComboBoxItem).Content, String), "h265")
+        Return If(TryCast(CmbCurFormat.SelectedItem, VideoFormatReference).Name, "h265")
     End Function
 
     Private _convHardCancel As CancellationTokenSource
@@ -121,14 +121,17 @@ Public Class MainWindow
 
                 BtnConvertStop.Content = "Stop after this file"
                 _convertStatusCode = ConvertStatusCode.Converting
+                ConvertTip.IsOpen = False
+                ConvertingFiles.CanReorderItems = False
                 _convHardCancel = New CancellationTokenSource
                 _convSoftCancel = New StrongBox(Of Boolean)
                 Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.Text = status,
-                                   _convHardCancel.Token, _convSoftCancel, GetActiveFormatName)
+                                   _convHardCancel.Token, _convSoftCancel)
                 If succeed Then
                     _fileList = Nothing
                 End If
                 _convertStatusCode = ConvertStatusCode.Idle
+                ConvertingFiles.CanReorderItems = True
                 _convSoftCancel = Nothing
                 _convHardCancel = Nothing
                 BtnConvertStop.Content = "Convert"
