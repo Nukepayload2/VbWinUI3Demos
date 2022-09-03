@@ -5,6 +5,8 @@ Imports System.Runtime.CompilerServices
 Imports System.Threading
 Imports Microsoft.UI
 Imports Microsoft.UI.Xaml
+Imports Microsoft.UI.Xaml.Controls
+Imports Microsoft.UI.Xaml.Input
 Imports Windows.ApplicationModel.DataTransfer
 
 Public Class MainWindow
@@ -14,7 +16,7 @@ Public Class MainWindow
 
     Sub New()
 
-        Title = "WinUI 3 VB Demo - H265 mp4 converter"
+        Title = "WinUI 3 VB Demo - mp4 converter"
 
         InitializeComponent()
 
@@ -43,8 +45,13 @@ Public Class MainWindow
         End If
     End Sub
 
+    Private _loaded As Boolean
     Private Sub MainWindow_Activated(sender As Object, args As WindowActivatedEventArgs) Handles Me.Activated
         WinUIVbHost.Instance.CurrentWindow = Me
+
+        If _loaded Then Return
+        _loaded = True
+
         If Not _tipsCompleted Then
             FileListTip.IsOpen = True
         End If
@@ -72,7 +79,7 @@ Public Class MainWindow
         Dim curErr As Exception = Nothing
         Try
             Dim droppedItems = Await dataView.GetStorageItemsAsync
-            Dim files = GetConvertibleVideos(droppedItems)
+            Dim files = GetConvertibleVideos(droppedItems, GetActiveFormatName)
             If files.Count > 0 AndAlso Not _tipsCompleted Then
                 FileListTip.IsOpen = False
                 ConvertTip.Target = BtnConvertStop
@@ -98,6 +105,10 @@ Public Class MainWindow
         def.Complete()
     End Sub
 
+    Private Function GetActiveFormatName() As String
+        Return If(TryCast(TryCast(CmbCurFormat.SelectedItem, ComboBoxItem).Content, String), "h265")
+    End Function
+
     Private _convHardCancel As CancellationTokenSource
     Private _convSoftCancel As StrongBox(Of Boolean)
     Private Async Sub BtnConvertStop_Click(sender As Object, e As RoutedEventArgs) Handles BtnConvertStop.Click
@@ -113,7 +124,7 @@ Public Class MainWindow
                 _convHardCancel = New CancellationTokenSource
                 _convSoftCancel = New StrongBox(Of Boolean)
                 Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.Text = status,
-                                   _convHardCancel.Token, _convSoftCancel)
+                                   _convHardCancel.Token, _convSoftCancel, GetActiveFormatName)
                 If succeed Then
                     _fileList = Nothing
                 End If
@@ -136,4 +147,15 @@ Public Class MainWindow
         End Select
     End Sub
 
+    Private Sub ConvertingFiles_KeyDown(sender As Object, e As KeyRoutedEventArgs) Handles ConvertingFiles.KeyDown
+        If _convertStatusCode <> ConvertStatusCode.Idle Then Return
+
+        Select Case e.Key
+            Case Windows.System.VirtualKey.Delete
+                For Each selItem In ConvertingFiles.SelectedItems.OfType(Of ConvertibleVideo).ToArray
+                    _fileList.Remove(selItem)
+                    e.Handled = True
+                Next
+        End Select
+    End Sub
 End Class

@@ -8,14 +8,14 @@ Imports FileAttributes = Windows.Storage.FileAttributes
 
 Module VideoConverter
 
-    Function GetConvertibleVideos(droppedItems As IReadOnlyList(Of IStorageItem)) As List(Of ConvertibleVideo)
+    Function GetConvertibleVideos(droppedItems As IReadOnlyList(Of IStorageItem), activeFormatName As String) As List(Of ConvertibleVideo)
         Dim files As New List(Of ConvertibleVideo)
         For Each droppedItem In droppedItems
             If droppedItem.Attributes.HasFlag(FileAttributes.Directory) Then
-                AddMp4FilesFromDir(files, droppedItem)
+                AddMp4FilesFromDir(files, droppedItem, activeFormatName)
             Else
                 Dim filePath = droppedItem.Path
-                TryAddMp4File(files, droppedItem.Name, Path.GetDirectoryName(filePath), filePath)
+                TryAddMp4File(files, droppedItem.Name, Path.GetDirectoryName(filePath), filePath, activeFormatName)
             End If
         Next
         Return files
@@ -24,7 +24,8 @@ Module VideoConverter
     Async Function ConvertAsync(fileList As IReadOnlyList(Of ConvertibleVideo),
                           statusCallback As Action(Of String),
                           cancelToken As Threading.CancellationToken,
-                          softStop As StrongBox(Of Boolean)) As Task(Of Boolean)
+                          softStop As StrongBox(Of Boolean),
+                          formatName As String) As Task(Of Boolean)
 
         Dim success = False
         Try
@@ -44,7 +45,7 @@ Module VideoConverter
                 Dim procStart As New ProcessStartInfo With {
                     .UseShellExecute = False,
                     .FileName = "cmd",
-                    .Arguments = $"/c H265.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
+                    .Arguments = $"/c {formatName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
                     .CreateNoWindow = True,
                     .RedirectStandardOutput = True,
                     .RedirectStandardError = True
@@ -56,9 +57,9 @@ Module VideoConverter
 
                 Dim killingEx As TaskCanceledException = Nothing
                 Try
-                    Dim stdErrTask = proc.StandardError.ReadToEndAsync
-                    Dim stdOutTask = proc.StandardOutput.ReadToEndAsync
-                    Await Task.WhenAll(stdErrTask, stdOutTask)
+                    Dim stdErrTask = proc.StandardError.ReadToEndAsync(cancelToken)
+                    Dim stdOutTask = proc.StandardOutput.ReadToEndAsync(cancelToken)
+                    Await Task.WhenAll(stdErrTask, stdOutTask).WaitAsync(cancelToken)
                     ThrowForExternalException(proc, stdErrTask.Result, stdOutTask.Result)
                 Catch ex As TaskCanceledException
                     killingEx = ex
@@ -169,26 +170,29 @@ Module VideoConverter
     }
 
     Private Sub TryAddMp4File(files As List(Of ConvertibleVideo),
-                              name As String, dirName As String, filePath As String)
+                              name As String, dirName As String,
+                              filePath As String, activeFormatName As String)
         Dim ext = Path.GetExtension(name)
         If Not _allowedExt.Contains(ext) Then Return
         Dim nameNoExt = Path.GetFileNameWithoutExtension(name)
-        If nameNoExt.EndsWith("_h265", StringComparison.OrdinalIgnoreCase) Then Return
+        If nameNoExt.EndsWith($"_{activeFormatName}", StringComparison.OrdinalIgnoreCase) Then Return
 
-        Dim convertedPath = GetConvertedPath(name, dirName)
+        Dim convertedPath = GetConvertedPath(name, dirName, activeFormatName)
         files.Add(New ConvertibleVideo With {.Path = filePath, .Output = convertedPath})
     End Sub
 
-    Private Function GetConvertedPath(name As String, dirName As String) As String
-        Dim convFileName = Path.GetFileNameWithoutExtension(name) & "_h265.mp4"
+    Private Function GetConvertedPath(name As String,
+                                      dirName As String, activeFormatName As String) As String
+        Dim convFileName = $"{Path.GetFileNameWithoutExtension(name)}_{activeFormatName.ToLowerInvariant}.mp4"
         Dim convertedPath = Path.Combine(dirName, convFileName)
         Return convertedPath
     End Function
 
-    Private Sub AddMp4FilesFromDir(files As List(Of ConvertibleVideo), item As IStorageItem)
+    Private Sub AddMp4FilesFromDir(files As List(Of ConvertibleVideo),
+                                   item As IStorageItem, activeFormatName As String)
         Dim fileInfo = New DirectoryInfo(item.Path).GetFiles("*", SearchOption.AllDirectories)
         For Each f In fileInfo
-            TryAddMp4File(files, f.Name, f.DirectoryName, f.FullName)
+            TryAddMp4File(files, f.Name, f.DirectoryName, f.FullName, activeFormatName)
         Next
     End Sub
 End Module

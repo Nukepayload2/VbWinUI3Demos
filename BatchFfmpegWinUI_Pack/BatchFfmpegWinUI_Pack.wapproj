@@ -57,6 +57,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BatchFfmpegWinUI\AV1.bat" />
     <Content Include="BatchFfmpegWinUI\H265.bat" />
     <Content Include="Images\SplashScreen.scale-200.png" />
     <Content Include="Images\LockScreenLogo.scale-200.png" />
