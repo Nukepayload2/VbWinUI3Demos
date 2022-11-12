@@ -1,9 +1,12 @@
 ﻿Option Strict On
 
 Imports System.ComponentModel
+Imports System.Globalization
 Imports System.IO
 Imports System.Runtime.CompilerServices
+Imports System.Text.RegularExpressions
 Imports Windows.Storage
+Imports Windows.UI.Core
 Imports FileAttributes = Windows.Storage.FileAttributes
 
 Module VideoConverter
@@ -24,6 +27,9 @@ Module VideoConverter
     Private Const IconOk As Char = ChrW(&HE001)
     Private Const IconExclamation As Char = ChrW(&HE171)
     Private Const IconProcessing As Char = ChrW(&HE768)
+
+    Private ReadOnly _regGetDuration As New Regex("Duration: (.+?)(?=,)", RegexOptions.Compiled)
+    Private ReadOnly _regGetTime As New Regex("time=(.+?)(?= )", RegexOptions.Compiled)
 
     Async Function ConvertAsync(fileList As IReadOnlyList(Of ConvertibleVideo),
                           statusCallback As Action(Of String),
@@ -61,8 +67,50 @@ Module VideoConverter
 
                 Dim killingEx As TaskCanceledException = Nothing
                 Try
-                    Dim stdErrTask = proc.StandardError.ReadToEndAsync(cancelToken)
-                    Dim stdOutTask = proc.StandardOutput.ReadToEndAsync(cancelToken)
+                    Dim totalTimeLength As Double?
+                    Dim handleOutput =
+                    Sub(curLine As String)
+                        If curLine = Nothing OrElse cancelToken.IsCancellationRequested Then
+                            vidFile.ProgressVisibility = Microsoft.UI.Xaml.Visibility.Collapsed
+                            Return
+                        End If
+
+                        If totalTimeLength Is Nothing Then
+                            If Not curLine.Contains("Duration: ") Then Return
+
+                            Dim timeMatch = _regGetDuration.Matches(curLine).OfType(Of Match).FirstOrDefault
+                            If timeMatch IsNot Nothing Then
+                                Dim timeString = timeMatch.Groups(1).Value
+                                Dim durationValue As TimeSpan = Nothing
+                                If TimeSpan.TryParseExact(timeString, "g", CultureInfo.InvariantCulture, durationValue) Then
+                                    Dim hours = durationValue.TotalHours
+                                    totalTimeLength = hours
+
+                                    vidFile.ProgressMax = hours
+                                    vidFile.ProgressValue = 0
+                                End If
+                            End If
+
+                        Else
+                            If Not curLine.Contains("time") Then Return
+
+                            Dim timeMatch = _regGetTime.Matches(curLine).OfType(Of Match).FirstOrDefault
+                            If timeMatch IsNot Nothing Then
+                                Dim timeString = timeMatch.Groups(1).Value
+                                Dim timeValue As TimeSpan = Nothing
+                                If TimeSpan.TryParseExact(timeString, "g", CultureInfo.InvariantCulture, timeValue) Then
+                                    Dim hours = timeValue.TotalHours
+                                    totalTimeLength = hours
+
+                                    vidFile.ProgressValue = hours
+                                    vidFile.ProgressVisibility = Microsoft.UI.Xaml.Visibility.Visible
+                                End If
+                            End If
+                        End If
+                    End Sub
+                    Dim stdErrTask = proc.StandardError.ReadToEndWithLineReportAsync(cancelToken, handleOutput)
+                    Dim stdOutTask = proc.StandardOutput.ReadToEndWithLineReportAsync(cancelToken, handleOutput)
+
                     Await Task.WhenAll(stdErrTask, stdOutTask).WaitAsync(cancelToken)
 
                     If proc.ExitCode <> 0 Then
@@ -84,6 +132,8 @@ Module VideoConverter
                 Catch ex As Exception
                     vidFile.Icon = IconExclamation
                     Throw
+                Finally
+                    vidFile.ProgressVisibility = Microsoft.UI.Xaml.Visibility.Collapsed
                 End Try
 
                 If killingEx IsNot Nothing Then

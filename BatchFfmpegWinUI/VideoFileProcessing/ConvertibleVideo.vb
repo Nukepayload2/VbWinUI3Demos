@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports Microsoft.UI.Xaml
 
 Public Class ConvertibleVideo
     Implements INotifyPropertyChanged
@@ -24,6 +25,39 @@ Public Class ConvertibleVideo
                 _Icon = value
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(Icon)))
             End If
+        End Set
+    End Property
+
+    Dim _ProgressMax As Double
+    Public Property ProgressMax As Double
+        Get
+            Return _ProgressMax
+        End Get
+        Set(value As Double)
+            _ProgressMax = value
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(ProgressMax)))
+        End Set
+    End Property
+
+    Dim _ProgressValue As Double
+    Public Property ProgressValue As Double
+        Get
+            Return _ProgressValue
+        End Get
+        Set(value As Double)
+            _ProgressValue = value
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(ProgressValue)))
+        End Set
+    End Property
+
+    Dim _ProgressVisibility As Visibility = Visibility.Collapsed
+    Public Property ProgressVisibility As Visibility
+        Get
+            Return _ProgressVisibility
+        End Get
+        Set(value As Visibility)
+            _ProgressVisibility = value
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(ProgressVisibility)))
         End Set
     End Property
 

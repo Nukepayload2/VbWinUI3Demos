@@ -1,27 +1,25 @@
-﻿Imports System.Buffers
-Imports System.IO
+﻿Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports System.Threading
 
 Module StreamHelper
+
     <Extension>
-    Async Function ReadToEndAsync(reader As StreamReader, token As CancellationToken) As Task(Of String)
-        Dim buf = ArrayPool(Of Char).Shared.Rent(4096)
-        Try
-            Dim bufMemory = buf.AsMemory
+    Async Function ReadToEndWithLineReportAsync(
+            reader As StreamReader,
+            token As CancellationToken,
+            lineHandler As Action(Of String)) As Task(Of String)
 
-            Dim result As New StringBuilder
-            Dim readCount As Integer
-            Do
-                readCount = Await reader.ReadBlockAsync(bufMemory, token).ConfigureAwait(False)
-                If readCount = 0 Then Exit Do
-                result.Append(buf.AsSpan(0, readCount))
-            Loop
+        Dim result As New StringBuilder
+        Do
+            Dim readText = Await reader.ReadLineAsync(token)
+            If readText Is Nothing Then Exit Do
+            lineHandler(readText)
+            result.Append(readText)
+        Loop
 
-            Return result.ToString
-        Finally
-            ArrayPool(Of Char).Shared.Return(buf)
-        End Try
+        Return result.ToString
     End Function
+
 End Module

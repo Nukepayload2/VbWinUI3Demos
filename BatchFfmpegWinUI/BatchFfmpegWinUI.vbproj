@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <RootNamespace>BatchFfmpegWinUI</RootNamespace>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
     <Platforms>x86;x64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>

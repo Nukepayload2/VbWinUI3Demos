@@ -49,6 +49,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                   Glyph="{Binding Path=Icon, Mode=OneWay}" Grid.RowSpan="2"/>
@@ -60,6 +61,10 @@
                         <TextBlock Grid.Column="2" Margin="8,0,0,0" Grid.Row="1">
                             → <Run Text="{Binding Path=Output, Mode=OneTime}"/>
                         </TextBlock>
+                        <ProgressBar Grid.Row="2" Height="4" HorizontalAlignment="Stretch" Margin="4"
+                                     Maximum="{Binding Path=ProgressMax, Mode=OneWay}" Grid.Column="2"
+                                     Value="{Binding Path=ProgressValue, Mode=OneWay}"
+                                     Visibility="{Binding Path=ProgressVisibility, Mode=OneWay}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
