@@ -67,7 +67,7 @@ Module VideoConverter
 
                 Dim killingEx As TaskCanceledException = Nothing
                 Try
-                    Dim totalTimeLength As Double?
+                    Dim totalTimeLength As Double? = Nothing
                     Dim handleOutput =
                     Sub(curLine As String)
                         If curLine = Nothing OrElse cancelToken.IsCancellationRequested Then

@@ -37,7 +37,7 @@
             </Button>
         </StackPanel>
         <ListView x:Name="ConvertingFiles" Grid.Row="2" AllowDrop="True" CanReorderItems="True"
-                 Margin="0,4,0,0" SelectionMode="Extended">
+                 Margin="0,4,0,0" SelectionMode="Extended" Background="{ThemeResource ListBoxBackgroundThemeBrush}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,4">

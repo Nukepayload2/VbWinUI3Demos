@@ -21,24 +21,28 @@ Public Class MainWindow
         InitializeComponent()
 
         _backdrop = New BackdropHelper(Me)
-        _backdrop.SetBackdrop(BackdropType.Mica)
+        Dim useAcrylic = False
+        _backdrop.SetBackdrop(BackdropType.Mica, useAcrylic)
 
-        TryCustomizeTitleBar()
+        TryCustomizeTitleBar(useAcrylic)
 
         FileListTip.Target = ConvertingFiles
     End Sub
 
-    Private Sub TryCustomizeTitleBar()
+    Private Sub TryCustomizeTitleBar(useAcrylic As Boolean)
         Dim appWnd = GetAppWindow
         Dim titleBar = appWnd.TitleBar
         If titleBar IsNot Nothing Then
-            ' Windows 11
+            ' Windows 11 or Windows 10
             With appWnd.TitleBar
                 .ExtendsContentIntoTitleBar = True
                 .ButtonBackgroundColor = Colors.Transparent
             End With
             Dim titleBarHeight = appWnd.GetTitleBarHeight
             LayoutRoot.RowDefinitions(0).Height = New GridLength(titleBarHeight + 4, GridUnitType.Pixel)
+            If useAcrylic Then
+                ConvertingFiles.Background = New Media.SolidColorBrush()
+            End If
         Else
             ' Windows 10
             TblTitleText.Visibility = Visibility.Collapsed
