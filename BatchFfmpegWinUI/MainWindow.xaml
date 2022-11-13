@@ -8,7 +8,8 @@
     xmlns:local="using:BatchFfmpegWinUI"
     mc:Ignorable="d">
 
-    <Grid x:Name="LayoutRoot" AllowDrop="True" Margin="4">
+    <Grid x:Name="LayoutRoot" AllowDrop="True" Padding="4" 
+          Background="{ThemeResource SystemRevealAltMediumColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="0"/>
             <RowDefinition Height="Auto"/>
@@ -37,7 +38,8 @@
             </Button>
         </StackPanel>
         <ListView x:Name="ConvertingFiles" Grid.Row="2" AllowDrop="True" CanReorderItems="True"
-                 Margin="0,4,0,0" SelectionMode="Extended" Background="{ThemeResource ListBoxBackgroundThemeBrush}">
+                  Margin="4" SelectionMode="Extended" CornerRadius="{ThemeResource ControlCornerRadius}"
+                  Background="{ThemeResource SystemRevealAltHighColor}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,4">

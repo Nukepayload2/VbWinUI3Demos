@@ -233,8 +233,8 @@ Module VideoConverter
         Return cancelToken
     End Function
 
-    Private ReadOnly _allowedExt As New HashSet(Of String) From {
-        ".mp4", ".mkv", ".flv", ".avi", ".wmv", ".mpg", ".mov"
+    Private ReadOnly _allowedExt As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase) From {
+        ".mp4", ".mkv", ".flv", ".avi", ".wmv", ".mpg", ".mov", ".3gp"
     }
 
     Private Sub TryAddMp4File(files As List(Of ConvertibleVideo),

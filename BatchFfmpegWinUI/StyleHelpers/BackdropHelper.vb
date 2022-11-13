@@ -22,7 +22,7 @@ Public Class BackdropHelper
         m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController()
     End Sub
 
-    Public Sub SetBackdrop(type As BackdropType)
+    Public Sub SetBackdrop(type As BackdropType, ByRef useAcrylic As Boolean)
         If m_currentBackdrop.Equals(type) Then
             Return
         End If
@@ -60,6 +60,7 @@ Public Class BackdropHelper
         If type = BackdropType.DesktopAcrylic Then
             If TrySetAcrylicBackdrop() Then
                 m_currentBackdrop = type
+                useAcrylic = True
             End If
         End If
 
