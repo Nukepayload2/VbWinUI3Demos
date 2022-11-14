@@ -5,8 +5,10 @@ Imports System.Globalization
 Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Text.RegularExpressions
+Imports System.Threading
+Imports Microsoft.UI.Dispatching
+Imports Microsoft.UI.Xaml
 Imports Windows.Storage
-Imports Windows.UI.Core
 Imports FileAttributes = Windows.Storage.FileAttributes
 
 Module VideoConverter
@@ -32,134 +34,30 @@ Module VideoConverter
     Private ReadOnly _regGetTime As New Regex("time=(.+?)(?= )", RegexOptions.Compiled)
 
     Async Function ConvertAsync(fileList As IReadOnlyList(Of ConvertibleVideo),
-                          statusCallback As Action(Of String),
-                          cancelToken As Threading.CancellationToken,
-                          softStop As StrongBox(Of Boolean)) As Task(Of Boolean)
+                                statusCallback As Action(Of String),
+                                cancelToken As CancellationToken,
+                                softStop As StrongBox(Of Boolean),
+                                parallelCount As Integer,
+                                dispatcherQueue As DispatcherQueue) As Task(Of Boolean)
 
-        Dim errToPrompt As String = Nothing
+        Dim errToPrompt As New StrongBox(Of String)
         Dim success = False
         Try
-            Dim index = 1
+            Dim index As New StrongBox(Of Integer)
             Dim timer As New Stopwatch
+            Dim parallelOptions As New ParallelOptions With {
+                .CancellationToken = cancelToken,
+                .MaxDegreeOfParallelism = parallelCount
+            }
 
-            For Each vidFile In fileList
-                statusCallback($"Converting {index}/{fileList.Count}")
-                If File.Exists(vidFile.Output) Then
-                    index += 1
-                    vidFile.Icon = IconOk
-                    Continue For
-                End If
-
-                vidFile.Icon = IconProcessing
-
-                Dim procStart As New ProcessStartInfo With {
-                    .UseShellExecute = False,
-                    .FileName = "cmd",
-                    .Arguments = $"/c {vidFile.FormatName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
-                    .CreateNoWindow = True,
-                    .RedirectStandardOutput = True,
-                    .RedirectStandardError = True
-                }
-
-                Dim proc = Process.Start(procStart)
-
-                timer.Start()
-
-                Dim killingEx As TaskCanceledException = Nothing
-                Try
-                    Dim totalTimeLength As Double? = Nothing
-                    Dim handleOutput =
-                    Sub(curLine As String)
-                        If curLine = Nothing OrElse cancelToken.IsCancellationRequested Then
-                            vidFile.ProgressVisibility = Microsoft.UI.Xaml.Visibility.Collapsed
-                            Return
-                        End If
-
-                        If totalTimeLength Is Nothing Then
-                            If Not curLine.Contains("Duration: ") Then Return
-
-                            Dim timeMatch = _regGetDuration.Matches(curLine).OfType(Of Match).FirstOrDefault
-                            If timeMatch IsNot Nothing Then
-                                Dim timeString = timeMatch.Groups(1).Value
-                                Dim durationValue As TimeSpan = Nothing
-                                If TimeSpan.TryParseExact(timeString, "g", CultureInfo.InvariantCulture, durationValue) Then
-                                    Dim hours = durationValue.TotalHours
-                                    totalTimeLength = hours
-
-                                    vidFile.ProgressMax = hours
-                                    vidFile.ProgressValue = 0
-                                End If
-                            End If
-
-                        Else
-                            If Not curLine.Contains("time") Then Return
-
-                            Dim timeMatch = _regGetTime.Matches(curLine).OfType(Of Match).FirstOrDefault
-                            If timeMatch IsNot Nothing Then
-                                Dim timeString = timeMatch.Groups(1).Value
-                                Dim timeValue As TimeSpan = Nothing
-                                If TimeSpan.TryParseExact(timeString, "g", CultureInfo.InvariantCulture, timeValue) Then
-                                    Dim hours = timeValue.TotalHours
-                                    totalTimeLength = hours
-
-                                    vidFile.ProgressValue = hours
-                                    vidFile.ProgressVisibility = Microsoft.UI.Xaml.Visibility.Visible
-                                End If
-                            End If
-                        End If
-                    End Sub
-                    Dim stdErrTask = proc.StandardError.ReadToEndWithLineReportAsync(cancelToken, handleOutput)
-                    Dim stdOutTask = proc.StandardOutput.ReadToEndWithLineReportAsync(cancelToken, handleOutput)
-
-                    Await Task.WhenAll(stdErrTask, stdOutTask).WaitAsync(cancelToken)
-
-                    If proc.ExitCode <> 0 Then
-                        Dim stdErr = stdErrTask.Result, stdOut = stdOutTask.Result
-                        Dim errMsg = String.Empty
-                        If stdErr <> Nothing Then
-                            errMsg = "Error: " & stdErr.Trim
-                        End If
-                        If stdOut <> Nothing Then
-                            If errMsg.Length > 0 Then errMsg &= Environment.NewLine
-                            errMsg &= "Output: " & stdOut.Trim
-                        End If
-                        errToPrompt = errMsg
-                    End If
-
-                    ThrowForExternalException(proc)
-                Catch ex As TaskCanceledException
-                    killingEx = ex
-                Catch ex As Exception
-                    vidFile.Icon = IconExclamation
-                    Throw
-                Finally
-                    vidFile.ProgressVisibility = Microsoft.UI.Xaml.Visibility.Collapsed
-                End Try
-
-                If killingEx IsNot Nothing Then
-                    vidFile.Icon = IconExclamation
-                    statusCallback("Cleaning canceled file...")
-                    proc.Kill(True)
-                    Dim convertedPath = vidFile.Output
-                    Await DeleteFileWithRetryAsync(convertedPath)
-                    Throw killingEx
-                End If
-
-                timer.Stop()
-
-                vidFile.Icon = IconOk
-
-                If index < fileList.Count - 1 Then
-                    cancelToken = Await PreventOverheatAsync(statusCallback, timer, cancelToken, softStop)
-                End If
-
-                If softStop.Value Then
-                    statusCallback("Conversion was canceled")
-                    Exit For
-                End If
-
-                index += 1
-            Next
+            Await Parallel.ForEachAsync(fileList, parallelOptions,
+            Function(vidFile, token)
+                Return New ValueTask(
+                Async Function()
+                    If Volatile.Read(softStop.Value) Then Return
+                    Await ConvertVideoFileAsync(vidFile, statusCallback, token, softStop, fileList.Count, index, timer, errToPrompt, dispatcherQueue)
+                End Function())
+            End Function)
 
             If softStop.Value Then
                 statusCallback("Stopped")
@@ -170,17 +68,157 @@ Module VideoConverter
             End If
 
             success = True
-        Catch ex As TaskCanceledException
+        Catch ex As AggregateException
+            For Each inner In ex.InnerExceptions
+                If TypeOf inner Is OperationCanceledException Then
+                    statusCallback("Conversion was terminated")
+                    Exit For
+                End If
+            Next
+        Catch ex As OperationCanceledException
             statusCallback("Conversion was terminated")
         Catch ex As Exception
             statusCallback($"Error {ex.GetType.Name}: {ex.Message}")
         End Try
 
-        If errToPrompt IsNot Nothing Then
-            Await ShowFfmpegError(errToPrompt)
+        If errToPrompt.Value IsNot Nothing Then
+            Await ShowFfmpegError(errToPrompt.Value)
         End If
 
         Return success
+    End Function
+
+    Private Async Function ConvertVideoFileAsync(
+             vidFile As ConvertibleVideo,
+             statusCallback As Action(Of String),
+             cancelToken As CancellationToken,
+             softStop As StrongBox(Of Boolean),
+             fileListCount As Integer,
+             index As StrongBox(Of Integer),
+             timer As Stopwatch,
+             errToPrompt As StrongBox(Of String),
+             dispatcherQueue As DispatcherQueue) As Task
+
+        Interlocked.Increment(index.Value)
+        statusCallback($"Converting {Volatile.Read(index.Value)}/{fileListCount}")
+        If File.Exists(vidFile.Output) Then
+            dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconOk)
+            Return
+        End If
+
+        dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconProcessing)
+
+        Dim procStart As New ProcessStartInfo With {
+            .UseShellExecute = False,
+            .FileName = "cmd",
+            .Arguments = $"/c {vidFile.FormatName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
+            .CreateNoWindow = True,
+            .RedirectStandardOutput = True,
+            .RedirectStandardError = True
+        }
+
+        Dim proc = Process.Start(procStart)
+
+        timer.Start()
+
+        Dim killingEx As TaskCanceledException = Nothing
+        Try
+            Dim totalTimeLength As Double? = Nothing
+            Dim handleOutput =
+            Sub(curLine As String)
+                If curLine = Nothing OrElse cancelToken.IsCancellationRequested Then
+                    dispatcherQueue.TryEnqueue(Sub() vidFile.ProgressVisibility = Visibility.Collapsed)
+                    Return
+                End If
+
+                If totalTimeLength Is Nothing Then
+                    If Not curLine.Contains("Duration: ") Then Return
+
+                    Dim timeMatch = _regGetDuration.Matches(curLine).OfType(Of Match).FirstOrDefault
+                    If timeMatch IsNot Nothing Then
+                        Dim timeString = timeMatch.Groups(1).Value
+                        Dim durationValue As TimeSpan = Nothing
+                        If TimeSpan.TryParseExact(timeString, "g", CultureInfo.InvariantCulture, durationValue) Then
+                            Dim hours = durationValue.TotalHours
+                            totalTimeLength = hours
+                            dispatcherQueue.TryEnqueue(
+                            Sub()
+                                vidFile.ProgressMax = hours
+                                vidFile.ProgressValue = 0
+                            End Sub)
+                        End If
+                    End If
+
+                Else
+                    If Not curLine.Contains("time") Then Return
+
+                    Dim timeMatch = _regGetTime.Matches(curLine).OfType(Of Match).FirstOrDefault
+                    If timeMatch IsNot Nothing Then
+                        Dim timeString = timeMatch.Groups(1).Value
+                        Dim timeValue As TimeSpan = Nothing
+                        If TimeSpan.TryParseExact(timeString, "g", CultureInfo.InvariantCulture, timeValue) Then
+                            Dim hours = timeValue.TotalHours
+                            totalTimeLength = hours
+
+                            dispatcherQueue.TryEnqueue(
+                            Sub()
+                                vidFile.ProgressValue = hours
+                                vidFile.ProgressVisibility = Visibility.Visible
+                            End Sub)
+                        End If
+                    End If
+                End If
+            End Sub
+
+            Dim stdErrTask = proc.StandardError.ReadToEndWithLineReportAsync(cancelToken, handleOutput)
+            Dim stdOutTask = proc.StandardOutput.ReadToEndWithLineReportAsync(cancelToken, handleOutput)
+
+            Await Task.WhenAll(stdErrTask, stdOutTask).WaitAsync(cancelToken)
+
+            If proc.ExitCode <> 0 Then
+                Dim stdErr = stdErrTask.Result, stdOut = stdOutTask.Result
+                Dim errMsg = String.Empty
+                If stdErr <> Nothing Then
+                    errMsg = "Error: " & stdErr.Trim
+                End If
+                If stdOut <> Nothing Then
+                    If errMsg.Length > 0 Then errMsg &= Environment.NewLine
+                    errMsg &= "Output: " & stdOut.Trim
+                End If
+                Interlocked.Exchange(errToPrompt.Value, errMsg)
+            End If
+
+            ThrowForExternalException(proc)
+        Catch ex As TaskCanceledException
+            killingEx = ex
+        Catch ex As Exception
+            dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconExclamation)
+            Throw
+        Finally
+            dispatcherQueue.TryEnqueue(Sub() vidFile.ProgressVisibility = Visibility.Collapsed)
+        End Try
+
+        If killingEx IsNot Nothing Then
+            dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconExclamation)
+            statusCallback("Cleaning canceled file...")
+            proc.Kill(True)
+            Dim convertedPath = vidFile.Output
+            Await DeleteFileWithRetryAsync(convertedPath)
+            Throw killingEx
+        End If
+
+        timer.Stop()
+
+        dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconOk)
+
+        If Volatile.Read(index.Value) < fileListCount - 1 Then
+            cancelToken = Await PreventOverheatAsync(statusCallback, timer, cancelToken, softStop)
+        End If
+
+        If Volatile.Read(softStop.Value) Then
+            statusCallback("Waiting for tasks end...")
+            Return
+        End If
     End Function
 
     Private Sub ThrowForExternalException(proc As Process)
@@ -213,18 +251,20 @@ Module VideoConverter
             Case Is < TimeSpan.FromSeconds(60)
                 waitSec = 3
             Case Else
-                waitSec = 20
-                timer.Reset()
+                waitSec = 5
+                SyncLock timer
+                    timer.Reset()
+                End SyncLock
         End Select
 
         If waitSec > 0 Then
             For i = waitSec To 1 Step -1
                 statusCallback("Sleeping... " & i)
                 For j = 1 To 10
-                    If softStop.Value Then Exit For
+                    If Volatile.Read(softStop.Value) Then Exit For
                     Await Task.Delay(100, cancelToken)
                 Next
-                If softStop.Value Then Exit For
+                If Volatile.Read(softStop.Value) Then Exit For
             Next
         Else
             cancelToken.ThrowIfCancellationRequested()

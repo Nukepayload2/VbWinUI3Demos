@@ -130,11 +130,10 @@ Public Class MainWindow
                 ConvertingFiles.CanReorderItems = False
                 _convHardCancel = New CancellationTokenSource
                 _convSoftCancel = New StrongBox(Of Boolean)
-                Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.Text = status,
-                                   _convHardCancel.Token, _convSoftCancel)
-                If succeed Then
-                    _fileList = Nothing
-                End If
+                Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.DispatcherQueue.TryEnqueue(
+                                                            Sub() ConvertStatus.Text = status),
+                                   _convHardCancel.Token, _convSoftCancel, CmbMaxConverterThread.SelectedIndex + 1,
+                                   DispatcherQueue)
                 _convertStatusCode = ConvertStatusCode.Idle
                 ConvertingFiles.CanReorderItems = True
                 _convSoftCancel = Nothing
@@ -160,6 +159,7 @@ Public Class MainWindow
 
         Select Case e.Key
             Case Windows.System.VirtualKey.Delete
+                If _fileList Is Nothing Then Return
                 For Each selItem In ConvertingFiles.SelectedItems.OfType(Of ConvertibleVideo).ToArray
                     _fileList.Remove(selItem)
                     e.Handled = True

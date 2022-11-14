@@ -13,7 +13,7 @@ Module StreamHelper
 
         Dim result As New StringBuilder
         Do
-            Dim readText = Await reader.ReadLineAsync(token)
+            Dim readText = Await reader.ReadLineAsync(token).ConfigureAwait(False)
             If readText Is Nothing Then Exit Do
             lineHandler(readText)
             result.Append(readText)
