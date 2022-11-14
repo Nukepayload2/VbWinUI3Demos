@@ -134,6 +134,9 @@ Public Class MainWindow
                                                             Sub() ConvertStatus.Text = status),
                                    _convHardCancel.Token, _convSoftCancel, CmbMaxConverterThread.SelectedIndex + 1,
                                    DispatcherQueue)
+                If succeed AndAlso Not _convSoftCancel.Value Then
+                    _fileList = Nothing
+                End If
                 _convertStatusCode = ConvertStatusCode.Idle
                 ConvertingFiles.CanReorderItems = True
                 _convSoftCancel = Nothing
