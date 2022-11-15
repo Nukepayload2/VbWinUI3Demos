@@ -62,12 +62,12 @@ Module VideoConverter
             If softStop.Value Then
                 statusCallback("Stopped")
                 Await MsgBoxAsync("Conversion was stopped")
+                success = False
             Else
                 statusCallback("Done")
                 Await MsgBoxAsync("Mission accomplished")
+                success = True
             End If
-
-            success = True
         Catch ex As AggregateException
             For Each inner In ex.InnerExceptions
                 If TypeOf inner Is OperationCanceledException Then

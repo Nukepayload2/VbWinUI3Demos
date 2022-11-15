@@ -137,11 +137,14 @@ Public Class MainWindow
                 If succeed AndAlso Not _convSoftCancel.Value Then
                     _fileList = Nothing
                 End If
-                _convertStatusCode = ConvertStatusCode.Idle
-                ConvertingFiles.CanReorderItems = True
-                _convSoftCancel = Nothing
-                _convHardCancel = Nothing
-                BtnConvertStop.Content = "Convert"
+                DispatcherQueue.TryEnqueue(
+                Sub()
+                    _convertStatusCode = ConvertStatusCode.Idle
+                    ConvertingFiles.CanReorderItems = True
+                    _convSoftCancel = Nothing
+                    _convHardCancel = Nothing
+                    BtnConvertStop.Content = "Convert"
+                End Sub)
             Case ConvertStatusCode.Converting
                 If _convSoftCancel IsNot Nothing Then
                     _convertStatusCode = ConvertStatusCode.StopRequested
