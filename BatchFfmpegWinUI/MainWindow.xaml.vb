@@ -92,7 +92,7 @@ Public Class MainWindow
                 _tipsCompleted = True
             End If
 
-            If _fileList Is Nothing Then
+            If _fileList Is Nothing OrElse _replaceListOnAdd Then
                 _fileList = New ObservableCollection(Of ConvertibleVideo)(files)
                 ConvertingFiles.ItemsSource = _fileList
             Else
@@ -116,6 +116,9 @@ Public Class MainWindow
 
     Private _convHardCancel As CancellationTokenSource
     Private _convSoftCancel As StrongBox(Of Boolean)
+    Private _replaceListOnAdd As Boolean
+    Private ReadOnly _processGroupManager As New FfmpegPerformanceManager
+
     Private Async Sub BtnConvertStop_Click(sender As Object, e As RoutedEventArgs) Handles BtnConvertStop.Click
         Select Case _convertStatusCode
             Case ConvertStatusCode.Idle
@@ -133,9 +136,9 @@ Public Class MainWindow
                 Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.DispatcherQueue.TryEnqueue(
                                                             Sub() ConvertStatus.Text = status),
                                    _convHardCancel.Token, _convSoftCancel, CmbMaxConverterThread.SelectedIndex + 1,
-                                   DispatcherQueue)
+                                   DispatcherQueue, _processGroupManager)
                 If succeed AndAlso Not _convSoftCancel.Value Then
-                    _fileList = Nothing
+                    _replaceListOnAdd = True
                 End If
                 DispatcherQueue.TryEnqueue(
                 Sub()
@@ -165,11 +168,53 @@ Public Class MainWindow
 
         Select Case e.Key
             Case Windows.System.VirtualKey.Delete
-                If _fileList Is Nothing Then Return
-                For Each selItem In ConvertingFiles.SelectedItems.OfType(Of ConvertibleVideo).ToArray
-                    _fileList.Remove(selItem)
-                    e.Handled = True
-                Next
+                e.Handled = DeleteSelected()
         End Select
+    End Sub
+
+    Private Function DeleteSelected() As Boolean
+        If _fileList Is Nothing Then Return False
+        Dim handled = False
+        For Each selItem In ConvertingFiles.SelectedItems.OfType(Of ConvertibleVideo).ToArray
+            _fileList.Remove(selItem)
+            handled = True
+        Next
+        Return handled
+    End Function
+
+    Private Sub BtnDelSelected_Click(sender As Object, e As RoutedEventArgs) Handles BtnDelSelected.Click
+        DeleteSelected()
+    End Sub
+
+    Private Sub BtnInvertSelection_Click(sender As Object, e As RoutedEventArgs) Handles BtnInvertSelection.Click
+        If _fileList Is Nothing Then Return
+        Dim selectedItems = ConvertingFiles.SelectedItems
+        Dim selectedSet = selectedItems.ToHashSet
+        selectedItems.Clear()
+        For Each f In _fileList
+            If Not selectedSet.Contains(f) Then
+                selectedItems.Add(f)
+            End If
+        Next
+    End Sub
+
+    Private Sub BtnPreferECores_Click(sender As Object, e As RoutedEventArgs) Handles BtnPreferECores.Click
+        _processGroupManager.PreferECores()
+        BtnPreferECores.Visibility = Visibility.Collapsed
+        BtnPreferPCores.Visibility = Visibility.Visible
+    End Sub
+
+    Private Sub BtnPreferPCores_Click(sender As Object, e As RoutedEventArgs) Handles BtnPreferPCores.Click
+        _processGroupManager.PreferPCores()
+        BtnPreferPCores.Visibility = Visibility.Collapsed
+        BtnPreferECores.Visibility = Visibility.Visible
+    End Sub
+
+    Private Sub BtnSelectAll_Click(sender As Object, e As RoutedEventArgs) Handles BtnSelectAll.Click
+        If _fileList Is Nothing Then Return
+        Dim selectedItems = ConvertingFiles.SelectedItems
+        For Each f In _fileList
+            selectedItems.Add(f)
+        Next
     End Sub
 End Class

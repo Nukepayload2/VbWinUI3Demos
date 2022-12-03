@@ -38,7 +38,8 @@ Module VideoConverter
                                 cancelToken As CancellationToken,
                                 softStop As StrongBox(Of Boolean),
                                 parallelCount As Integer,
-                                dispatcherQueue As DispatcherQueue) As Task(Of Boolean)
+                                dispatcherQueue As DispatcherQueue,
+                                processGroupManager As FfmpegPerformanceManager) As Task(Of Boolean)
 
         Dim errToPrompt As New StrongBox(Of String)
         Dim success = False
@@ -55,7 +56,7 @@ Module VideoConverter
                 Return New ValueTask(
                 Async Function()
                     If Volatile.Read(softStop.Value) Then Return
-                    Await ConvertVideoFileAsync(vidFile, statusCallback, token, softStop, fileList.Count, index, timer, errToPrompt, dispatcherQueue)
+                    Await ConvertVideoFileAsync(vidFile, statusCallback, token, softStop, fileList.Count, index, timer, errToPrompt, dispatcherQueue, processGroupManager)
                 End Function())
             End Function)
 
@@ -81,6 +82,7 @@ Module VideoConverter
             statusCallback($"Error {ex.GetType.Name}: {ex.Message}")
         End Try
 
+        processGroupManager.Clear()
         If errToPrompt.Value IsNot Nothing Then
             Await ShowFfmpegError(errToPrompt.Value)
         End If
@@ -97,7 +99,8 @@ Module VideoConverter
              index As StrongBox(Of Integer),
              timer As Stopwatch,
              errToPrompt As StrongBox(Of String),
-             dispatcherQueue As DispatcherQueue) As Task
+             dispatcherQueue As DispatcherQueue,
+             processGroupManager As FfmpegPerformanceManager) As Task
 
         Interlocked.Increment(index.Value)
         statusCallback($"Converting {Volatile.Read(index.Value)}/{fileListCount}")
@@ -118,7 +121,7 @@ Module VideoConverter
         }
 
         Dim proc = Process.Start(procStart)
-
+        processGroupManager.Add(proc)
         timer.Start()
 
         Dim killingEx As TaskCanceledException = Nothing
@@ -195,6 +198,7 @@ Module VideoConverter
             dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconExclamation)
             Throw
         Finally
+            processGroupManager.Remove(proc)
             dispatcherQueue.TryEnqueue(Sub() vidFile.ProgressVisibility = Visibility.Collapsed)
         End Try
 

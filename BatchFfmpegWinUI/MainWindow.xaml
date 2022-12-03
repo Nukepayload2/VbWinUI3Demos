@@ -37,7 +37,22 @@
                 <ComboBoxItem>3 videos</ComboBoxItem>
                 <ComboBoxItem>4 videos</ComboBoxItem>
             </ComboBox>
-            <Button x:Name="BtnConvertStop" Margin="4" Content="Convert" VerticalAlignment="Center">
+            <Button Margin="4,0" Grid.Row="1" HorizontalAlignment="Right" Padding="6">
+                <Button.Content>
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE10C;" />
+                </Button.Content>
+                <Button.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuFlyoutItem x:Name="BtnInvertSelection" Text="Invert Selection"/>
+                        <MenuFlyoutItem x:Name="BtnSelectAll" Text="Select All"/>
+                        <MenuFlyoutItem x:Name="BtnDelSelected" Text="Remove Selected from List"/>
+                        <MenuFlyoutItem x:Name="BtnPreferPCores" Text="Prefer P-Cores (Normal priority)" Visibility="Collapsed"/>
+                        <MenuFlyoutItem x:Name="BtnPreferECores" Text="Prefer E-Cores (Lower priority)"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <Button x:Name="BtnConvertStop" Style="{ThemeResource AccentButtonStyle}"
+                    Margin="4" Content="Convert" VerticalAlignment="Center">
                 <Button.Resources>
                     <TeachingTip x:Name="ConvertTip"
                                  Title="Convert video" PreferredPlacement="BottomLeft"
@@ -55,6 +70,7 @@
                             <ColumnDefinition Width="32"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
