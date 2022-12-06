@@ -48,6 +48,7 @@
                         <MenuFlyoutItem x:Name="BtnDelSelected" Text="Remove Selected from List"/>
                         <MenuFlyoutItem x:Name="BtnPreferPCores" Text="Prefer P-Cores (Normal priority)" Visibility="Collapsed"/>
                         <MenuFlyoutItem x:Name="BtnPreferECores" Text="Prefer E-Cores (Lower priority)"/>
+                        <MenuFlyoutItem x:Name="BtnCleanConverted" Text="Recycle Converted Videos..."/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

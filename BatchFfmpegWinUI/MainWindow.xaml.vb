@@ -1,6 +1,7 @@
 ﻿Option Strict On
 
 Imports System.Collections.ObjectModel
+Imports System.IO
 Imports System.Runtime.CompilerServices
 Imports System.Threading
 Imports Microsoft.UI
@@ -216,5 +217,38 @@ Public Class MainWindow
         For Each f In _fileList
             selectedItems.Add(f)
         Next
+    End Sub
+
+    Private Async Sub BtnCleanConverted_Click() Handles BtnCleanConverted.Click
+        Dim folderPicker As New System.Windows.Forms.FolderBrowserDialog
+        Dim folder = If(folderPicker.ShowDialog = System.Windows.Forms.DialogResult.OK,
+            folderPicker.SelectedPath, Nothing)
+        If folder Is Nothing Then Return
+        Dim currentPostfix = "_" & DirectCast(CmbCurFormat.SelectedItem, VideoFormatReference).Name & ".mp4"
+        Dim filesInFolder = New DirectoryInfo(folder).GetFiles()
+        Dim removeCandidate =
+            From f In filesInFolder
+            Where f.Name.EndsWith(currentPostfix, StringComparison.OrdinalIgnoreCase) AndAlso f.Length > 0
+            Let fullName = f.FullName
+            Select candidate = fullName.Substring(0, fullName.Length - currentPostfix.Length) & ".mp4"
+            Where File.Exists(candidate)
+
+        Dim myComputer As New Devices.Computer
+        Dim recycleCount = 0, errorCount = 0
+        Dim lastError As Exception = Nothing
+        For Each f In removeCandidate
+            Try
+                myComputer.FileSystem.DeleteFile(f, FileIO.UIOption.OnlyErrorDialogs,
+                                                 FileIO.RecycleOption.SendToRecycleBin)
+                recycleCount += 1
+            Catch ex As Exception
+                errorCount += 1
+                lastError = ex
+            End Try
+        Next
+
+        Await MsgBoxAsync($"Recycled {recycleCount} file(s), 
+Error {errorCount} file(s), 
+Last error is {If(lastError Is Nothing, "nothing", lastError.Message)}.", "Recycle Result")
     End Sub
 End Class
