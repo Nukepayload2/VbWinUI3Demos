@@ -2,6 +2,7 @@
 
 Imports System.Collections.Concurrent
 Imports System.ComponentModel
+Imports System.Runtime.CompilerServices
 Imports System.Runtime.InteropServices
 
 Public Class FfmpegPerformanceManager
@@ -12,6 +13,7 @@ Public Class FfmpegPerformanceManager
     Private ReadOnly _priorityLock As New Object
     Private ReadOnly _snapshotLock As New Object
 
+    <MethodImpl(MethodImplOptions.Synchronized)>
     Public Sub Add(proc As Process)
         InvalidateSnapshot()
         ChangePriorityOnErrorResumeNext(proc, _priority)
@@ -74,6 +76,7 @@ Public Class FfmpegPerformanceManager
         End SyncLock
 
         Dim cmdPid = proc.Id
+        If snap Is Nothing Then Return
         For Each p In snap
             Dim parentPid = GetParentProcessId(p.Handle)
             If parentPid = cmdPid Then
