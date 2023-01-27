@@ -69,14 +69,13 @@ Public Class FfmpegPerformanceManager
         ' proc is cmd. Find ffmpeg.
         Dim snap = _lastSnapshot
         SyncLock _snapshotLock
-            If _lastSnapshot Is Nothing Then
+            If snap Is Nothing Then
                 snap = Aggregate p In Process.GetProcesses() Where p.ProcessName = "ffmpeg" Into ToArray
                 _lastSnapshot = snap
             End If
         End SyncLock
 
         Dim cmdPid = proc.Id
-        If snap Is Nothing Then Return
         For Each p In snap
             Dim parentPid = GetParentProcessId(p.Handle)
             If parentPid = cmdPid Then
