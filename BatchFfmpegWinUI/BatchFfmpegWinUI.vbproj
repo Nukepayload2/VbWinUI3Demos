@@ -14,11 +14,11 @@
   <PropertyGroup>
     <NoWarn>CA1416, $(NoWarn)</NoWarn>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
   </ItemGroup>
-
+  
   <!-- Import the common workaround file -->
   <Import Project="$(WinUI3VBTargetFilePath)" />
   

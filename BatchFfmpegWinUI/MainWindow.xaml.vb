@@ -9,6 +9,7 @@ Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
 Imports Microsoft.UI.Xaml.Input
 Imports Windows.ApplicationModel.DataTransfer
+Imports Windows.Foundation
 
 Public Class MainWindow
     Inherits Window
@@ -226,17 +227,50 @@ Public Class MainWindow
         If folder Is Nothing Then Return
         Dim currentPostfix = "_" & DirectCast(CmbCurFormat.SelectedItem, VideoFormatReference).Name & ".mp4"
         Dim filesInFolder = New DirectoryInfo(folder).GetFiles()
+        Dim fileNoExtCache =
+            Aggregate f In filesInFolder
+            Select Path.Combine(folderPicker.SelectedPath,
+                                Path.GetFileNameWithoutExtension(f.Name))
+            Into ToHashSet
         Dim removeCandidate =
-            From f In filesInFolder
-            Where f.Name.EndsWith(currentPostfix, StringComparison.OrdinalIgnoreCase) AndAlso f.Length > 0
-            Let fullName = f.FullName
-            Select candidate = fullName.Substring(0, fullName.Length - currentPostfix.Length) & ".mp4"
-            Where File.Exists(candidate)
+            (From f In filesInFolder
+             Where f.Name.EndsWith(currentPostfix, StringComparison.OrdinalIgnoreCase) AndAlso f.Length > 0
+             Let fullName = f.FullName,
+                 candidateNoExt = fullName.Substring(0, fullName.Length - currentPostfix.Length)
+             Where fileNoExtCache.Contains(candidateNoExt)
+             Select candidates = (From ext In AllowedVideoFileExtensions
+                                  Let candidate = candidateNoExt & ext
+                                  Where File.Exists(candidate)
+                                  Select candidate)
+             ).SelectMany(Function(it) it).ToArray
 
         Dim myComputer As New Devices.Computer
         Dim recycleCount = 0, errorCount = 0
         Dim lastError As Exception = Nothing
+        Dim showProgressDialog = removeCandidate.Length > 10
+        Dim showDialogTask As Task = Nothing
+        Dim progressDialog As ProgressDialog = Nothing
+        If showProgressDialog Then
+            progressDialog = New ProgressDialog With {
+                .Title = $"Recycling {removeCandidate.Length} files. Sit back and relax."
+            }
+            showDialogTask = progressDialog.ShowDialogAsync(
+                New DialogOptions With {
+                    .Width = 832, .Height = 233,
+                    .CenterOwner = True, .Maximizable = False,
+                    .Minimizable = False, .Resizable = False
+                })
+        End If
+
+        Dim processedFileCount = 0
         For Each f In removeCandidate
+            If progressDialog IsNot Nothing Then
+                progressDialog.DispatcherQueue.TryEnqueue(
+                    Sub() progressDialog.UpdateProgress(
+                        $"Recycling {processedFileCount + 1} of {removeCandidate.Length} files.
+{f}", processedFileCount, removeCandidate.Length))
+                Await Task.Delay(10)
+            End If
             Try
                 myComputer.FileSystem.DeleteFile(f, FileIO.UIOption.OnlyErrorDialogs,
                                                  FileIO.RecycleOption.SendToRecycleBin)
@@ -245,7 +279,14 @@ Public Class MainWindow
                 errorCount += 1
                 lastError = ex
             End Try
+            processedFileCount += 1
         Next
+
+        If progressDialog IsNot Nothing Then
+            progressDialog.DispatcherQueue.TryEnqueue(
+                Sub() progressDialog.Close())
+            Await showDialogTask
+        End If
 
         Await MsgBoxAsync($"Recycled {recycleCount} file(s), 
 Error {errorCount} file(s), 

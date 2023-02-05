@@ -281,6 +281,12 @@ Module VideoConverter
         ".mp4", ".mkv", ".flv", ".avi", ".wmv", ".mpg", ".mov", ".3gp"
     }
 
+    Public ReadOnly Property AllowedVideoFileExtensions As IEnumerable(Of String)
+        Get
+            Return _allowedExt
+        End Get
+    End Property
+
     Private Sub TryAddMp4File(files As List(Of ConvertibleVideo),
                               name As String, dirName As String,
                               filePath As String, activeFormatName As String)

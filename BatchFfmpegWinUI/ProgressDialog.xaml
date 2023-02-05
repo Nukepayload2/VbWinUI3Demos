@@ -1,0 +1,15 @@
+﻿<Window
+    x:Class="BatchFfmpegWinUI.ProgressDialog"
+    x:Name="FrmMain"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:BatchFfmpegWinUI"
+    mc:Ignorable="d">
+
+    <StackPanel x:Name="LayoutRoot" Margin="16">
+        <TextBlock x:Name="LblProgressText" Margin="16"/>
+        <ProgressBar x:Name="PrgProgress" Margin="16"/>
+    </StackPanel>
+</Window>
