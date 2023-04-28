@@ -7,6 +7,7 @@ Imports System.Threading
 Imports Microsoft.UI
 Imports Microsoft.UI.Xaml
 Imports Microsoft.UI.Xaml.Controls
+Imports Microsoft.UI.Xaml.Controls.Primitives
 Imports Microsoft.UI.Xaml.Input
 Imports Windows.ApplicationModel.DataTransfer
 Imports Windows.Foundation
@@ -22,6 +23,7 @@ Public Class MainWindow
 
         InitializeComponent()
 
+        TblTitleText.Text = Title
         _backdrop = New BackdropHelper(Me)
         Dim useAcrylic = False
         _backdrop.SetBackdrop(BackdropType.Mica, useAcrylic)
@@ -86,7 +88,8 @@ Public Class MainWindow
         Dim curErr As Exception = Nothing
         Try
             Dim droppedItems = Await dataView.GetStorageItemsAsync
-            Dim files = GetConvertibleVideos(droppedItems, GetActiveFormatName)
+            Dim selectedFormat = DirectCast(CmbCurFormat.SelectedItem, VideoFormatReference)
+            Dim files = GetConvertibleFiles(droppedItems, selectedFormat.Name, selectedFormat.FileExtension)
             If files.Count > 0 AndAlso Not _tipsCompleted Then
                 FileListTip.IsOpen = False
                 ConvertTip.Target = BtnConvertStop
@@ -112,10 +115,6 @@ Public Class MainWindow
         def.Complete()
     End Sub
 
-    Private Function GetActiveFormatName() As String
-        Return If(TryCast(CmbCurFormat.SelectedItem, VideoFormatReference).Name, "h265")
-    End Function
-
     Private _convHardCancel As CancellationTokenSource
     Private _convSoftCancel As StrongBox(Of Boolean)
     Private _replaceListOnAdd As Boolean
@@ -137,7 +136,8 @@ Public Class MainWindow
                 _convSoftCancel = New StrongBox(Of Boolean)
                 Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.DispatcherQueue.TryEnqueue(
                                                             Sub() ConvertStatus.Text = status),
-                                   _convHardCancel.Token, _convSoftCancel, CmbMaxConverterThread.SelectedIndex + 1,
+                                   _convHardCancel.Token, _convSoftCancel,
+                                   CInt(DirectCast(CmbMaxConverterThread.SelectedItem, SelectorItem).Tag),
                                    DispatcherQueue, _processGroupManager)
                 If succeed AndAlso Not _convSoftCancel.Value Then
                     _replaceListOnAdd = True
@@ -225,7 +225,8 @@ Public Class MainWindow
         Dim folder = If(folderPicker.ShowDialog = System.Windows.Forms.DialogResult.OK,
             folderPicker.SelectedPath, Nothing)
         If folder Is Nothing Then Return
-        Dim currentPostfix = "_" & DirectCast(CmbCurFormat.SelectedItem, VideoFormatReference).Name & ".mp4"
+        Dim selectedFormat = DirectCast(CmbCurFormat.SelectedItem, VideoFormatReference)
+        Dim currentPostfix = "_" & selectedFormat.Name & selectedFormat.FileExtension
         Dim filesInFolder = New DirectoryInfo(folder).GetFiles()
         Dim fileNoExtCache =
             Aggregate f In filesInFolder
@@ -291,5 +292,15 @@ Public Class MainWindow
         Await MsgBoxAsync($"Recycled {recycleCount} file(s), 
 Error {errorCount} file(s), 
 Last error is {If(lastError Is Nothing, "nothing", lastError.Message)}.", "Recycle Result")
+    End Sub
+
+    Private Sub RadThemeChoice_Click() Handles RadAutoTheme.Click, RadDarkTheme.Click, RadLightTheme.Click
+        If RadAutoTheme.IsChecked Then
+            LayoutRoot.RequestedTheme = ElementTheme.Default
+        ElseIf RadDarkTheme.IsChecked Then
+            LayoutRoot.RequestedTheme = ElementTheme.Dark
+        ElseIf RadLightTheme.IsChecked Then
+            LayoutRoot.RequestedTheme = ElementTheme.Light
+        End If
     End Sub
 End Class

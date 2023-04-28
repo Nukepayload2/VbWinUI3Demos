@@ -8,15 +8,13 @@
     xmlns:local="using:BatchFfmpegWinUI"
     mc:Ignorable="d">
 
-    <Grid x:Name="LayoutRoot" AllowDrop="True" Padding="4" 
-          Background="{ThemeResource SystemRevealAltMediumColor}">
+    <Grid x:Name="LayoutRoot" AllowDrop="True" Padding="4">
         <Grid.RowDefinitions>
             <RowDefinition Height="0"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock x:Name="TblTitleText" Margin="4"
-                   Text="{Binding ElementName=FrmMain,Path=Title,Mode=OneWay}" />
+        <TextBlock x:Name="TblTitleText" Margin="4"/>
         <TextBlock x:Name="ConvertStatus" Margin="4" Grid.Row="1"
                    Text="Ready. Drag and drop mp4 files to add to conversion list." />
         <StackPanel Orientation="Horizontal" Margin="4,0" Grid.Row="1" HorizontalAlignment="Right">
@@ -27,15 +25,25 @@
                         <TextBlock ToolTipService.ToolTip="{Binding Path=Description,Mode=OneTime}" Text="{Binding Path=Name,Mode=OneTime}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
-                <local:VideoFormatReference Name="H265" Description="Fast, medium compression ratio, uses NVIDIA GPU"/>
-                <local:VideoFormatReference Name="AV1" Description="Extremely slow, high compression ratio, uses CPU"/>
+                <local:VideoFormatReference Name="H265" FileExtension=".mp4" Description="Fast, medium compression ratio, uses NVIDIA GPU"/>
+                <local:VideoFormatReference Name="AV1" FileExtension=".mp4" Description="Extremely slow, high compression ratio, uses CPU"/>
+                <local:VideoFormatReference Name="AAC" FileExtension=".aac"  Description="Audio extraction, uses CPU"/>
             </ComboBox>
             <TextBlock Margin="4,0" VerticalAlignment="Center">Max parallel:</TextBlock>
             <ComboBox x:Name="CmbMaxConverterThread" Margin="4,0" SelectedIndex="0" VerticalAlignment="Center">
-                <ComboBoxItem>1 video</ComboBoxItem>
-                <ComboBoxItem>2 videos</ComboBoxItem>
-                <ComboBoxItem>3 videos</ComboBoxItem>
-                <ComboBoxItem>4 videos</ComboBoxItem>
+                <ComboBoxItem Tag="1">1 file</ComboBoxItem>
+                <ComboBoxItem Tag="2">2 files</ComboBoxItem>
+                <ComboBoxItem Tag="3">3 files</ComboBoxItem>
+                <ComboBoxItem Tag="4">4 files</ComboBoxItem>
+                <ComboBoxItem Tag="6">6 files</ComboBoxItem>
+                <ComboBoxItem Tag="8">8 files</ComboBoxItem>
+                <ComboBoxItem Tag="12">12 files</ComboBoxItem>
+                <ComboBoxItem Tag="14">14 files</ComboBoxItem>
+                <ComboBoxItem Tag="16">16 files</ComboBoxItem>
+                <ComboBoxItem Tag="20">20 files</ComboBoxItem>
+                <ComboBoxItem Tag="24">24 files</ComboBoxItem>
+                <ComboBoxItem Tag="32">32 files</ComboBoxItem>
+                <ComboBoxItem Tag="64">64 files</ComboBoxItem>
             </ComboBox>
             <Button Margin="4,0" Grid.Row="1" HorizontalAlignment="Right" Padding="6">
                 <Button.Content>
@@ -49,6 +57,11 @@
                         <MenuFlyoutItem x:Name="BtnPreferPCores" Text="Prefer P-Cores (Normal priority)" Visibility="Collapsed"/>
                         <MenuFlyoutItem x:Name="BtnPreferECores" Text="Prefer E-Cores (Lower priority)"/>
                         <MenuFlyoutItem x:Name="BtnCleanConverted" Text="Recycle Converted Videos..."/>
+                        <MenuFlyoutSubItem Text="Themes">
+                            <RadioMenuFlyoutItem x:Name="RadAutoTheme" GroupName="ThemeChoice" Text="Auto" IsChecked="True"/>
+                            <RadioMenuFlyoutItem x:Name="RadLightTheme" GroupName="ThemeChoice" Text="Light"/>
+                            <RadioMenuFlyoutItem x:Name="RadDarkTheme" GroupName="ThemeChoice" Text="Dark"/>
+                        </MenuFlyoutSubItem>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

@@ -77,7 +77,14 @@ Public Class FfmpegPerformanceManager
 
         Dim cmdPid = proc.Id
         For Each p In snap
-            Dim parentPid = GetParentProcessId(p.Handle)
+            If p.HasExited Then Continue For
+            Dim hProcess As IntPtr
+            Try
+                hProcess = p.Handle
+            Catch ex As Exception
+                Continue For
+            End Try
+            Dim parentPid = GetParentProcessId(hProcess)
             If parentPid = cmdPid Then
                 p.PriorityClass = value
                 Exit For

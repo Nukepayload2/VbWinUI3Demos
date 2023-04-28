@@ -13,14 +13,14 @@ Imports FileAttributes = Windows.Storage.FileAttributes
 
 Module VideoConverter
 
-    Function GetConvertibleVideos(droppedItems As IReadOnlyList(Of IStorageItem), activeFormatName As String) As List(Of ConvertibleVideo)
+    Function GetConvertibleFiles(droppedItems As IReadOnlyList(Of IStorageItem), activeFormatName As String, fileExtension As String) As List(Of ConvertibleVideo)
         Dim files As New List(Of ConvertibleVideo)
         For Each droppedItem In droppedItems
             If droppedItem.Attributes.HasFlag(FileAttributes.Directory) Then
-                AddMp4FilesFromDir(files, droppedItem, activeFormatName)
+                AddFilesFromDir(files, droppedItem, activeFormatName, fileExtension)
             Else
                 Dim filePath = droppedItem.Path
-                TryAddMp4File(files, droppedItem.Name, Path.GetDirectoryName(filePath), filePath, activeFormatName)
+                TryAddFile(files, droppedItem.Name, Path.GetDirectoryName(filePath), filePath, activeFormatName, fileExtension)
             End If
         Next
         Return files
@@ -278,7 +278,8 @@ Module VideoConverter
     End Function
 
     Private ReadOnly _allowedExt As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase) From {
-        ".mp4", ".mkv", ".flv", ".avi", ".wmv", ".mpg", ".mov", ".3gp"
+        ".mp4", ".mkv", ".flv", ".avi", ".wmv", ".mpg", ".mov", ".3gp",
+        ".wav", ".mp3", ".aac", ".flac", ".m4a"
     }
 
     Public ReadOnly Property AllowedVideoFileExtensions As IEnumerable(Of String)
@@ -287,30 +288,30 @@ Module VideoConverter
         End Get
     End Property
 
-    Private Sub TryAddMp4File(files As List(Of ConvertibleVideo),
+    Private Sub TryAddFile(files As List(Of ConvertibleVideo),
                               name As String, dirName As String,
-                              filePath As String, activeFormatName As String)
+                              filePath As String, activeFormatName As String, fileExtension As String)
         Dim ext = Path.GetExtension(name)
         If Not _allowedExt.Contains(ext) Then Return
         Dim nameNoExt = Path.GetFileNameWithoutExtension(name)
         If nameNoExt.EndsWith($"_{activeFormatName}", StringComparison.OrdinalIgnoreCase) Then Return
 
-        Dim convertedPath = GetConvertedPath(name, dirName, activeFormatName)
+        Dim convertedPath = GetConvertedPath(name, dirName, activeFormatName, fileExtension)
         files.Add(New ConvertibleVideo(filePath, convertedPath, activeFormatName))
     End Sub
 
     Private Function GetConvertedPath(name As String,
-                                      dirName As String, activeFormatName As String) As String
-        Dim convFileName = $"{Path.GetFileNameWithoutExtension(name)}_{activeFormatName.ToLowerInvariant}.mp4"
+                                      dirName As String, activeFormatName As String, fileExtension As String) As String
+        Dim convFileName = $"{Path.GetFileNameWithoutExtension(name)}_{activeFormatName.ToLowerInvariant}{fileExtension}"
         Dim convertedPath = Path.Combine(dirName, convFileName)
         Return convertedPath
     End Function
 
-    Private Sub AddMp4FilesFromDir(files As List(Of ConvertibleVideo),
-                                   item As IStorageItem, activeFormatName As String)
+    Private Sub AddFilesFromDir(files As List(Of ConvertibleVideo),
+                                   item As IStorageItem, activeFormatName As String, fileExtension As String)
         Dim fileInfo = New DirectoryInfo(item.Path).GetFiles("*", SearchOption.AllDirectories)
         For Each f In fileInfo
-            TryAddMp4File(files, f.Name, f.DirectoryName, f.FullName, activeFormatName)
+            TryAddFile(files, f.Name, f.DirectoryName, f.FullName, activeFormatName, fileExtension)
         Next
     End Sub
 End Module
