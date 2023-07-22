@@ -46,7 +46,10 @@ VB projects need to import the following target file to use WinUI 3.
 ```
 
 ### Approach 2: Use the WinUI C# XAML compiler and code converter
-WIP. See [XamlLanguageConverter](#XamlLanguageConverter).
+Stopped with error. See [XamlLanguageConverter].
+
+### Approach 3: Use a custom XAML compiler
+WIP. See [Custom XAML compiler].
 
 ## Samples
 ### BatchFfmpegWinUI
@@ -55,10 +58,10 @@ A `mp4` video to `h265` transcoder.
 It converts `.mp4` and `.mkv` videos to `h265` encoding by calling `H265.bat`.
 
 #### Status
-Finished. Tested with WinUI3 `v1.1.1` and .NET SDK v6.0.3.
+Finished. Tested with WinUI3 `v1.3.230602002` and .NET SDK v7.0.7.
 
 #### How to use it
-- Install `ffmpeg` to `%programfiles%\ffmpeg\bin`. If you have installed it in a different location, please add it to `%PATH%` or edit the path to `ffmpeg` in [H265.bat](BatchFfmpegWinUI_Pack/BatchFfmpegWinUI/H265.bat).
+- Install `ffmpeg` to `%programfiles%\ffmpeg\bin`. If you have installed it in a different location, please add it to `%PATH%`.
 - Open `BatchFfmpegWinUI.sln` with Visual Studio.
 - Set `BatchFfmpegWinUI_Pack` as startup project and run.
 - Drag and drop `.mp4` or `.mkv` files.
@@ -66,6 +69,14 @@ Finished. Tested with WinUI3 `v1.1.1` and .NET SDK v6.0.3.
 
 ### XamlLanguageConverter
 Demonstrates how to use MSBuild extension points to invoke the C# XAML compiler and start a [code converter](https://github.com/Nukepayload2/CSharpToVB-Backports) to convert the C# output to VB.
+
+#### Status
+Stopped with error. Because it has severe performance issues.
+
+### Custom XAML compiler
+Use the `XamlCompilerTaskPath` MSBuild property to replace the path of `Microsoft.UI.Xaml.Markup.Compiler.dll` with a custom XAML compiler.
+
+The source code of this part won't be published until Microsoft uploads the source code of `Microsoft.UI.Xaml.Markup.Compiler`. 
 
 #### Status
 WIP
