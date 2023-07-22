@@ -4,6 +4,7 @@ Imports System.ComponentModel
 Imports System.Globalization
 Imports System.IO
 Imports System.Runtime.CompilerServices
+Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Threading
 Imports Microsoft.UI.Dispatching
@@ -13,14 +14,17 @@ Imports FileAttributes = Windows.Storage.FileAttributes
 
 Module VideoConverter
 
-    Function GetConvertibleFiles(droppedItems As IReadOnlyList(Of IStorageItem), activeFormatName As String, fileExtension As String) As List(Of ConvertibleVideo)
+    Function GetConvertibleFiles(droppedItems As IReadOnlyList(Of IStorageItem),
+                                 activeFormatName As String,
+                                 activeScriptName As String,
+                                 fileExtension As String) As List(Of ConvertibleVideo)
         Dim files As New List(Of ConvertibleVideo)
         For Each droppedItem In droppedItems
             If droppedItem.Attributes.HasFlag(FileAttributes.Directory) Then
-                AddFilesFromDir(files, droppedItem, activeFormatName, fileExtension)
+                AddFilesFromDir(files, droppedItem, activeFormatName, activeScriptName, fileExtension)
             Else
                 Dim filePath = droppedItem.Path
-                TryAddFile(files, droppedItem.Name, Path.GetDirectoryName(filePath), filePath, activeFormatName, fileExtension)
+                TryAddFile(files, droppedItem.Name, Path.GetDirectoryName(filePath), filePath, activeFormatName, activeScriptName, fileExtension)
             End If
         Next
         Return files
@@ -109,15 +113,22 @@ Module VideoConverter
             Return
         End If
 
-        dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconProcessing)
+        dispatcherQueue.TryEnqueue(
+            Sub()
+                vidFile.Icon = IconProcessing
+                vidFile.ProgressIndeterminate = True
+                vidFile.ProgressVisibility = Visibility.Visible
+            End Sub)
 
         Dim procStart As New ProcessStartInfo With {
             .UseShellExecute = False,
             .FileName = "cmd",
-            .Arguments = $"/c {vidFile.FormatName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
+            .Arguments = $"/c {vidFile.ScriptName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
             .CreateNoWindow = True,
             .RedirectStandardOutput = True,
-            .RedirectStandardError = True
+            .RedirectStandardError = True,
+            .StandardOutputEncoding = Encoding.UTF8,
+            .StandardErrorEncoding = Encoding.UTF8
         }
 
         Dim proc = Process.Start(procStart)
@@ -165,8 +176,8 @@ Module VideoConverter
 
                             dispatcherQueue.TryEnqueue(
                             Sub()
+                                vidFile.ProgressIndeterminate = False
                                 vidFile.ProgressValue = hours
-                                vidFile.ProgressVisibility = Visibility.Visible
                             End Sub)
                         End If
                     End If
@@ -279,7 +290,7 @@ Module VideoConverter
 
     Private ReadOnly _allowedExt As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase) From {
         ".mp4", ".mkv", ".flv", ".avi", ".wmv", ".mpg", ".mov", ".3gp",
-        ".wav", ".mp3", ".aac", ".flac", ".m4a"
+        ".wav", ".mp3", ".aac", ".flac", ".m4a", ".png", ".jpg", ".jpeg"
     }
 
     Public ReadOnly Property AllowedVideoFileExtensions As IEnumerable(Of String)
@@ -289,15 +300,16 @@ Module VideoConverter
     End Property
 
     Private Sub TryAddFile(files As List(Of ConvertibleVideo),
-                              name As String, dirName As String,
-                              filePath As String, activeFormatName As String, fileExtension As String)
+                           name As String, dirName As String,
+                           filePath As String, activeFormatName As String,
+                           activeScriptName As String, fileExtension As String)
         Dim ext = Path.GetExtension(name)
         If Not _allowedExt.Contains(ext) Then Return
         Dim nameNoExt = Path.GetFileNameWithoutExtension(name)
         If nameNoExt.EndsWith($"_{activeFormatName}", StringComparison.OrdinalIgnoreCase) Then Return
 
         Dim convertedPath = GetConvertedPath(name, dirName, activeFormatName, fileExtension)
-        files.Add(New ConvertibleVideo(filePath, convertedPath, activeFormatName))
+        files.Add(New ConvertibleVideo(filePath, convertedPath, activeFormatName, activeScriptName))
     End Sub
 
     Private Function GetConvertedPath(name As String,
@@ -308,10 +320,11 @@ Module VideoConverter
     End Function
 
     Private Sub AddFilesFromDir(files As List(Of ConvertibleVideo),
-                                   item As IStorageItem, activeFormatName As String, fileExtension As String)
+                                item As IStorageItem, activeFormatName As String,
+                                activeScriptName As String, fileExtension As String)
         Dim fileInfo = New DirectoryInfo(item.Path).GetFiles("*", SearchOption.AllDirectories)
         For Each f In fileInfo
-            TryAddFile(files, f.Name, f.DirectoryName, f.FullName, activeFormatName, fileExtension)
+            TryAddFile(files, f.Name, f.DirectoryName, f.FullName, activeFormatName, activeScriptName, fileExtension)
         Next
     End Sub
 End Module

@@ -16,7 +16,7 @@ Module StreamHelper
             Dim readText = Await reader.ReadLineAsync(token).ConfigureAwait(False)
             If readText Is Nothing Then Exit Do
             lineHandler(readText)
-            result.Append(readText)
+            result.AppendLine(readText)
         Loop
 
         Return result.ToString

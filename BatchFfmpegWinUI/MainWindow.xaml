@@ -22,12 +22,15 @@
             <ComboBox x:Name="CmbCurFormat" SelectedIndex="0" VerticalAlignment="Center">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock ToolTipService.ToolTip="{Binding Path=Description,Mode=OneTime}" Text="{Binding Path=Name,Mode=OneTime}"/>
+                        <TextBlock ToolTipService.ToolTip="{Binding Path=Description,Mode=OneTime}" Text="{Binding Path=DisplayName,Mode=OneTime}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
-                <local:VideoFormatReference Name="H265" FileExtension=".mp4" Description="Fast, medium compression ratio, uses NVIDIA GPU"/>
-                <local:VideoFormatReference Name="AV1" FileExtension=".mp4" Description="Extremely slow, high compression ratio, uses CPU"/>
-                <local:VideoFormatReference Name="AAC" FileExtension=".aac"  Description="Audio extraction, uses CPU"/>
+                <local:VideoFormatReference FormatName="AV1" ScriptName="AV1_NVGPU" DisplayName="AV1 with NVIDIA GPU" FileExtension=".mp4" Description="Fast, high compression ratio, uses NVIDIA GPU."/>
+                <local:VideoFormatReference FormatName="H265" ScriptName="H265_NVGPU" DisplayName="H265 with NVIDIA GPU" FileExtension=".mp4" Description="Fast, medium compression ratio, uses NVIDIA GPU."/>
+                <local:VideoFormatReference FormatName="AV1" ScriptName="AV1_CPU" DisplayName="AV1 with CPU" FileExtension=".mp4" Description="Extremely slow, high compression ratio, uses CPU."/>
+                <local:VideoFormatReference FormatName="AAC" ScriptName="AAC" DisplayName="Extract Audio as AAC" FileExtension=".aac"  Description="Audio extraction, uses CPU."/>
+                <local:VideoFormatReference FormatName="AVIF" ScriptName="AVIF_CPU" DisplayName="First frame to AVIF with CPU" FileExtension=".avif"  Description="Slow, high memory usage, high compression ratio. Save the first frame as picture, uses CPU."/>
+                <local:VideoFormatReference FormatName="AVIF" ScriptName="AVIF_NVGPU" DisplayName="First frame to AVIF with NVIDIA GPU" FileExtension=".avif"  Description="Fast, poor format compatibility, high compression ratio. Save the first frame as picture, uses NVIDIA GPU."/>
             </ComboBox>
             <TextBlock Margin="4,0" VerticalAlignment="Center">Max parallel:</TextBlock>
             <ComboBox x:Name="CmbMaxConverterThread" Margin="4,0" SelectedIndex="0" VerticalAlignment="Center">
@@ -103,7 +106,8 @@
                         </TextBlock>
                         <ProgressBar Grid.Row="2" Height="4" HorizontalAlignment="Stretch" Margin="4"
                                      Maximum="{Binding Path=ProgressMax, Mode=OneWay}" Grid.Column="2"
-                                     Value="{Binding Path=ProgressValue, Mode=OneWay}"
+                                     Value="{Binding Path=ProgressValue, Mode=OneWay}" 
+                                     IsIndeterminate="{Binding Path=ProgressIndeterminate, Mode=OneWay}"
                                      Visibility="{Binding Path=ProgressVisibility, Mode=OneWay}"/>
                     </Grid>
                 </DataTemplate>

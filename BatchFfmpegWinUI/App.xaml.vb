@@ -1,4 +1,5 @@
 Imports System.IO
+Imports System.Text
 Imports Microsoft.UI.Xaml
 
 Public Class App
@@ -16,6 +17,7 @@ Public Class App
         SetCurDirToAsmDir()
         _mWindow = New MainWindow
         _mWindow.Activate()
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)
     End Sub
 
     Private Sub SetCurDirToAsmDir()

@@ -10,7 +10,8 @@ Module CrashHandler
                 .IsReadOnly = True,
                 .AcceptsReturn = True,
                 .Text = message,
-                .Margin = New Thickness(4)
+                .Margin = New Thickness(4),
+                .TextWrapping = TextWrapping.Wrap
             }
         }
         My.Computer.Audio.PlaySystemSound(System.Media.SystemSounds.Exclamation)

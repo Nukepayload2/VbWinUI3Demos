@@ -89,7 +89,7 @@ Public Class MainWindow
         Try
             Dim droppedItems = Await dataView.GetStorageItemsAsync
             Dim selectedFormat = DirectCast(CmbCurFormat.SelectedItem, VideoFormatReference)
-            Dim files = GetConvertibleFiles(droppedItems, selectedFormat.Name, selectedFormat.FileExtension)
+            Dim files = GetConvertibleFiles(droppedItems, selectedFormat.FormatName, selectedFormat.ScriptName, selectedFormat.FileExtension)
             If files.Count > 0 AndAlso Not _tipsCompleted Then
                 FileListTip.IsOpen = False
                 ConvertTip.Target = BtnConvertStop
@@ -226,7 +226,7 @@ Public Class MainWindow
             folderPicker.SelectedPath, Nothing)
         If folder Is Nothing Then Return
         Dim selectedFormat = DirectCast(CmbCurFormat.SelectedItem, VideoFormatReference)
-        Dim currentPostfix = "_" & selectedFormat.Name & selectedFormat.FileExtension
+        Dim currentPostfix = "_" & selectedFormat.FormatName & selectedFormat.FileExtension
         Dim filesInFolder = New DirectoryInfo(folder).GetFiles()
         Dim fileNoExtCache =
             Aggregate f In filesInFolder
