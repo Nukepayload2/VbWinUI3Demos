@@ -65,6 +65,8 @@
                             <RadioMenuFlyoutItem x:Name="RadLightTheme" GroupName="ThemeChoice" Text="Light"/>
                             <RadioMenuFlyoutItem x:Name="RadDarkTheme" GroupName="ThemeChoice" Text="Dark"/>
                         </MenuFlyoutSubItem>
+                        <ToggleMenuFlyoutItem x:Name="ChkAutoSleep" Text="Add delay to prevent overheating" IsChecked="True"/>
+                        <ToggleMenuFlyoutItem x:Name="ChkOnErrorResumeNext" Text="On Error Resume Next"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

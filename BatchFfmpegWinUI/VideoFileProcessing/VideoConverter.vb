@@ -1,5 +1,6 @@
 ﻿Option Strict On
 
+Imports System.Collections.Concurrent
 Imports System.ComponentModel
 Imports System.Globalization
 Imports System.IO
@@ -41,7 +42,7 @@ Module VideoConverter
                                 statusCallback As Action(Of String),
                                 cancelToken As CancellationToken,
                                 softStop As StrongBox(Of Boolean),
-                                parallelCount As Integer,
+                                options As ConvertOptions,
                                 dispatcherQueue As DispatcherQueue,
                                 processGroupManager As FfmpegPerformanceManager) As Task(Of Boolean)
 
@@ -52,21 +53,34 @@ Module VideoConverter
             Dim timer As New Stopwatch
             Dim parallelOptions As New ParallelOptions With {
                 .CancellationToken = cancelToken,
-                .MaxDegreeOfParallelism = parallelCount
+                .MaxDegreeOfParallelism = options.ParallelCount
             }
 
+            Dim suppressedExceptions As New ConcurrentBag(Of Exception)
             Await Parallel.ForEachAsync(fileList, parallelOptions,
             Function(vidFile, token)
                 Return New ValueTask(
                 Async Function()
                     If Volatile.Read(softStop.Value) Then Return
-                    Await ConvertVideoFileAsync(vidFile, statusCallback, token, softStop, fileList.Count, index, timer, errToPrompt, dispatcherQueue, processGroupManager)
+                    Try
+                        Await ConvertVideoFileAsync(vidFile, statusCallback, token, softStop, fileList.Count, index, timer, errToPrompt, dispatcherQueue, processGroupManager, options)
+                    Catch ex As Exception
+                        If options.IgnoreError Then
+                            suppressedExceptions.Add(ex)
+                        Else
+                            Throw
+                        End If
+                    End Try
                 End Function())
             End Function)
 
+            If Not suppressedExceptions.IsEmpty Then
+                Throw New AggregateException(suppressedExceptions)
+            End If
+
             If softStop.Value Then
                 statusCallback("Stopped")
-                Await MsgBoxAsync("Conversion was stopped")
+                Await MsgBoxAsync("Conversion was stopped.")
                 success = False
             Else
                 statusCallback("Done")
@@ -76,10 +90,11 @@ Module VideoConverter
         Catch ex As AggregateException
             For Each inner In ex.InnerExceptions
                 If TypeOf inner Is OperationCanceledException Then
-                    statusCallback("Conversion was terminated")
-                    Exit For
+                    statusCallback("Conversion was terminated.")
+                    Exit Try
                 End If
             Next
+            statusCallback($"Suppressed {ex.InnerExceptions.Count} error(s).")
         Catch ex As OperationCanceledException
             statusCallback("Conversion was terminated")
         Catch ex As Exception
@@ -104,7 +119,8 @@ Module VideoConverter
              timer As Stopwatch,
              errToPrompt As StrongBox(Of String),
              dispatcherQueue As DispatcherQueue,
-             processGroupManager As FfmpegPerformanceManager) As Task
+             processGroupManager As FfmpegPerformanceManager,
+             options As ConvertOptions) As Task
 
         Interlocked.Increment(index.Value)
         statusCallback($"Converting {Volatile.Read(index.Value)}/{fileListCount}")
@@ -226,7 +242,7 @@ Module VideoConverter
 
         dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconOk)
 
-        If Volatile.Read(index.Value) < fileListCount - 1 Then
+        If options.AutoSleep AndAlso Volatile.Read(index.Value) < fileListCount - 1 Then
             cancelToken = Await PreventOverheatAsync(statusCallback, timer, cancelToken, softStop)
         End If
 

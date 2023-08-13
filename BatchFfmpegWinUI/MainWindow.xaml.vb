@@ -134,10 +134,15 @@ Public Class MainWindow
                 ConvertingFiles.CanReorderItems = False
                 _convHardCancel = New CancellationTokenSource
                 _convSoftCancel = New StrongBox(Of Boolean)
+                Dim options As New ConvertOptions With {
+                    .ParallelCount = CInt(DirectCast(CmbMaxConverterThread.SelectedItem, SelectorItem).Tag),
+                    .AutoSleep = ChkAutoSleep.IsChecked,
+                    .IgnoreError = ChkOnErrorResumeNext.IsChecked
+                }
                 Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.DispatcherQueue.TryEnqueue(
                                                             Sub() ConvertStatus.Text = status),
                                    _convHardCancel.Token, _convSoftCancel,
-                                   CInt(DirectCast(CmbMaxConverterThread.SelectedItem, SelectorItem).Tag),
+                                   options,
                                    DispatcherQueue, _processGroupManager)
                 If succeed AndAlso Not _convSoftCancel.Value Then
                     _replaceListOnAdd = True
