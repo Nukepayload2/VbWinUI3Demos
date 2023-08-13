@@ -67,6 +67,7 @@
                         </MenuFlyoutSubItem>
                         <ToggleMenuFlyoutItem x:Name="ChkAutoSleep" Text="Add delay to prevent overheating" IsChecked="True"/>
                         <ToggleMenuFlyoutItem x:Name="ChkOnErrorResumeNext" Text="On Error Resume Next"/>
+                        <ToggleMenuFlyoutItem x:Name="ChkAutoScroll" Text="Auto scroll to last started item"/>
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>

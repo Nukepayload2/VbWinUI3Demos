@@ -137,10 +137,20 @@ Public Class MainWindow
                 Dim options As New ConvertOptions With {
                     .ParallelCount = CInt(DirectCast(CmbMaxConverterThread.SelectedItem, SelectorItem).Tag),
                     .AutoSleep = ChkAutoSleep.IsChecked,
-                    .IgnoreError = ChkOnErrorResumeNext.IsChecked
+                    .IgnoreError = ChkOnErrorResumeNext.IsChecked,
+                    .AutoScroll = ChkAutoScroll.IsChecked
                 }
-                Dim succeed = Await ConvertAsync(_fileList, Sub(status) ConvertStatus.DispatcherQueue.TryEnqueue(
-                                                            Sub() ConvertStatus.Text = status),
+                BtnDelSelected.IsEnabled = False
+                ChkAutoSleep.IsEnabled = False
+                ChkOnErrorResumeNext.IsEnabled = False
+                ChkAutoScroll.IsEnabled = False
+                Dim succeed = Await ConvertAsync(_fileList, Sub(status, index) ConvertStatus.DispatcherQueue.TryEnqueue(
+                                                            Sub()
+                                                                ConvertStatus.Text = status
+                                                                If index IsNot Nothing AndAlso index.Value < _fileList.Count AndAlso index.Value >= 0 Then
+                                                                    ConvertingFiles.ScrollIntoView(_fileList(index.Value))
+                                                                End If
+                                                            End Sub),
                                    _convHardCancel.Token, _convSoftCancel,
                                    options,
                                    DispatcherQueue, _processGroupManager)
@@ -149,6 +159,10 @@ Public Class MainWindow
                 End If
                 DispatcherQueue.TryEnqueue(
                 Sub()
+                    BtnDelSelected.IsEnabled = True
+                    ChkAutoSleep.IsEnabled = True
+                    ChkOnErrorResumeNext.IsEnabled = True
+                    ChkAutoScroll.IsEnabled = True
                     _convertStatusCode = ConvertStatusCode.Idle
                     ConvertingFiles.CanReorderItems = True
                     _convSoftCancel = Nothing

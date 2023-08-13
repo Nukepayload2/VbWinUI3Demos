@@ -39,7 +39,7 @@ Module VideoConverter
     Private ReadOnly _regGetTime As New Regex("time=(.+?)(?= )", RegexOptions.Compiled)
 
     Async Function ConvertAsync(fileList As IReadOnlyList(Of ConvertibleVideo),
-                                statusCallback As Action(Of String),
+                                statusCallback As Action(Of String, Integer?),
                                 cancelToken As CancellationToken,
                                 softStop As StrongBox(Of Boolean),
                                 options As ConvertOptions,
@@ -79,26 +79,26 @@ Module VideoConverter
             End If
 
             If softStop.Value Then
-                statusCallback("Stopped")
+                statusCallback("Stopped", Nothing)
                 Await MsgBoxAsync("Conversion was stopped.")
                 success = False
             Else
-                statusCallback("Done")
+                statusCallback("Done", Nothing)
                 Await MsgBoxAsync("Mission accomplished")
                 success = True
             End If
         Catch ex As AggregateException
             For Each inner In ex.InnerExceptions
                 If TypeOf inner Is OperationCanceledException Then
-                    statusCallback("Conversion was terminated.")
+                    statusCallback("Conversion was terminated.", Nothing)
                     Exit Try
                 End If
             Next
-            statusCallback($"Suppressed {ex.InnerExceptions.Count} error(s).")
+            statusCallback($"Suppressed {ex.InnerExceptions.Count} error(s).", Nothing)
         Catch ex As OperationCanceledException
-            statusCallback("Conversion was terminated")
+            statusCallback("Conversion was terminated", Nothing)
         Catch ex As Exception
-            statusCallback($"Error {ex.GetType.Name}: {ex.Message}")
+            statusCallback($"Error {ex.GetType.Name}: {ex.Message}", Nothing)
         End Try
 
         processGroupManager.Clear()
@@ -111,7 +111,7 @@ Module VideoConverter
 
     Private Async Function ConvertVideoFileAsync(
              vidFile As ConvertibleVideo,
-             statusCallback As Action(Of String),
+             statusCallback As Action(Of String, Integer?),
              cancelToken As CancellationToken,
              softStop As StrongBox(Of Boolean),
              fileListCount As Integer,
@@ -123,7 +123,7 @@ Module VideoConverter
              options As ConvertOptions) As Task
 
         Interlocked.Increment(index.Value)
-        statusCallback($"Converting {Volatile.Read(index.Value)}/{fileListCount}")
+        statusCallback($"Converting {Volatile.Read(index.Value)}/{fileListCount}", index.Value)
         If File.Exists(vidFile.Output) Then
             dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconOk)
             Return
@@ -231,7 +231,7 @@ Module VideoConverter
 
         If killingEx IsNot Nothing Then
             dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconExclamation)
-            statusCallback("Cleaning canceled file...")
+            statusCallback("Cleaning canceled file...", Nothing)
             proc.Kill(True)
             Dim convertedPath = vidFile.Output
             Await DeleteFileWithRetryAsync(convertedPath)
@@ -247,7 +247,7 @@ Module VideoConverter
         End If
 
         If Volatile.Read(softStop.Value) Then
-            statusCallback("Waiting for tasks end...")
+            statusCallback("Waiting for tasks end...", Nothing)
             Return
         End If
     End Function
@@ -273,7 +273,7 @@ Module VideoConverter
         End If
     End Function
 
-    Private Async Function PreventOverheatAsync(statusCallback As Action(Of String), timer As Stopwatch, cancelToken As Threading.CancellationToken, softStop As StrongBox(Of Boolean)) As Task(Of Threading.CancellationToken)
+    Private Async Function PreventOverheatAsync(statusCallback As Action(Of String, Integer?), timer As Stopwatch, cancelToken As Threading.CancellationToken, softStop As StrongBox(Of Boolean)) As Task(Of Threading.CancellationToken)
         Dim waitSec As Integer
 
         Select Case timer.Elapsed
@@ -290,7 +290,7 @@ Module VideoConverter
 
         If waitSec > 0 Then
             For i = waitSec To 1 Step -1
-                statusCallback("Sleeping... " & i)
+                statusCallback("Sleeping... " & i, Nothing)
                 For j = 1 To 10
                     If Volatile.Read(softStop.Value) Then Exit For
                     Await Task.Delay(100, cancelToken)
