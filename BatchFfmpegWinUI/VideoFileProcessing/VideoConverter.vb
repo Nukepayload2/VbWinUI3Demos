@@ -124,9 +124,14 @@ Module VideoConverter
 
         Interlocked.Increment(index.Value)
         statusCallback($"Converting {Volatile.Read(index.Value)}/{fileListCount}", index.Value)
-        If File.Exists(vidFile.Output) Then
-            dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconOk)
-            Return
+        Dim existingFileInfo As New FileInfo(vidFile.Output)
+        If existingFileInfo.Exists Then
+            If existingFileInfo.Length > 0 Then
+                dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconOk)
+                Return
+            Else
+                existingFileInfo.Delete()
+            End If
         End If
 
         dispatcherQueue.TryEnqueue(
