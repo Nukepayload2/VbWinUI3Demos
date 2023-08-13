@@ -147,7 +147,9 @@ Public Class MainWindow
                 Dim succeed = Await ConvertAsync(_fileList, Sub(status, index) ConvertStatus.DispatcherQueue.TryEnqueue(
                                                             Sub()
                                                                 ConvertStatus.Text = status
-                                                                If index IsNot Nothing AndAlso index.Value < _fileList.Count AndAlso index.Value >= 0 Then
+                                                                If options.AutoScroll AndAlso
+                                                                   index IsNot Nothing AndAlso
+                                                                   index.Value < _fileList.Count AndAlso index.Value >= 0 Then
                                                                     ConvertingFiles.ScrollIntoView(_fileList(index.Value))
                                                                 End If
                                                             End Sub),
