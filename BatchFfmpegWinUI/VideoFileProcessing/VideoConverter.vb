@@ -151,6 +151,7 @@ Module VideoConverter
         processGroupManager.Add(proc)
         timer.Start()
 
+        Dim conversionOk = False
         Dim killingEx As TaskCanceledException = Nothing
         Try
             Dim totalTimeLength As Double? = Nothing
@@ -219,6 +220,7 @@ Module VideoConverter
             End If
 
             ThrowForExternalException(proc)
+            conversionOk = True
         Catch ex As TaskCanceledException
             killingEx = ex
         Catch ex As Exception
@@ -240,7 +242,9 @@ Module VideoConverter
 
         timer.Stop()
 
-        dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconOk)
+        If conversionOk Then
+            dispatcherQueue.TryEnqueue(Sub() vidFile.Icon = IconOk)
+        End If
 
         If options.AutoSleep AndAlso Volatile.Read(index.Value) < fileListCount - 1 Then
             cancelToken = Await PreventOverheatAsync(statusCallback, timer, cancelToken, softStop)
