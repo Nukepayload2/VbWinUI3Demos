@@ -3,11 +3,12 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <RootNamespace>BatchFfmpegWinUI</RootNamespace>
-    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <Platforms>x86;x64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
     <UseWindowsForms>true</UseWindowsForms>
+    <WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
   </PropertyGroup>
 
   <!-- Workaround for https://github.com/dotnet/sdk/issues/17890 -->
@@ -16,9 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240829007" />
   </ItemGroup>
-  
+
   <!-- Import the common workaround file -->
   <Import Project="$(WinUI3VBTargetFilePath)" />
   
