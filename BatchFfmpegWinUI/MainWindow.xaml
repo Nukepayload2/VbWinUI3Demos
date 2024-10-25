@@ -26,7 +26,9 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
                 <local:VideoFormatReference FormatName="AV1" ScriptName="AV1_NVGPU" DisplayName="AV1 with NVIDIA GPU" FileExtension=".mp4" Description="Fast, high compression ratio, uses NVIDIA GPU."/>
+                <local:VideoFormatReference FormatName="AV1" ScriptName="AV1_LOW_NVGPU" DisplayName="AV1 low bitrate with NVIDIA GPU" FileExtension=".mp4" Description="Fast, high compression ratio, low bitrate, uses NVIDIA GPU."/>
                 <local:VideoFormatReference FormatName="H265" ScriptName="H265_NVGPU" DisplayName="H265 with NVIDIA GPU" FileExtension=".mp4" Description="Fast, medium compression ratio, uses NVIDIA GPU."/>
+                <local:VideoFormatReference FormatName="H264" ScriptName="H264_NVGPU" DisplayName="H264 with NVIDIA GPU" FileExtension=".mp4" Description="Fast, medium compression ratio, uses NVIDIA GPU."/>
                 <local:VideoFormatReference FormatName="AV1" ScriptName="AV1_CPU" DisplayName="AV1 with CPU" FileExtension=".mp4" Description="Extremely slow, high compression ratio, uses CPU."/>
                 <local:VideoFormatReference FormatName="AAC" ScriptName="AAC" DisplayName="Extract Audio as AAC" FileExtension=".aac"  Description="Audio extraction, uses CPU."/>
                 <local:VideoFormatReference FormatName="AVIF" ScriptName="AVIF_CPU" DisplayName="First frame to AVIF with CPU" FileExtension=".avif"  Description="Slow, high memory usage, high compression ratio. Save the first frame as picture, uses CPU."/>
