@@ -9,7 +9,7 @@
   <Identity
     Name="ea64a7df-e803-4f18-a0b4-c3ae214e0094"
     Publisher="CN=Nukepayload2, O=Nukepayload2, C=CN"
-    Version="1.1.0.0" />
+    Version="1.1.2.0" />
 
   <Properties>
     <DisplayName>BatchFfmpegWinUI_Pack</DisplayName>

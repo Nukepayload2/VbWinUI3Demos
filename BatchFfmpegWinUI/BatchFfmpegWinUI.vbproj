@@ -4,16 +4,18 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>BatchFfmpegWinUI</RootNamespace>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-    <Platforms>x86;x64</Platforms>
+    <Platforms>x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
-    <UseWindowsForms>true</UseWindowsForms>
     <WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
+    <!--<PublishAot>True</PublishAot>-->
+    <NoWarn></NoWarn>
   </PropertyGroup>
 
   <!-- Workaround for https://github.com/dotnet/sdk/issues/17890 -->
   <PropertyGroup>
     <NoWarn>CA1416, $(NoWarn)</NoWarn>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>

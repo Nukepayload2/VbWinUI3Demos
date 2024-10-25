@@ -14,7 +14,8 @@ Module CrashHandler
                 .TextWrapping = TextWrapping.Wrap
             }
         }
-        My.Computer.Audio.PlaySystemSound(System.Media.SystemSounds.Exclamation)
+        My.Computer.Audio.PlaySystemSound(ElementSoundKind.Show)
+
         Await errWnd.ShowDialogAsync(New DialogOptions With {.CenterOwner = True})
     End Function
 

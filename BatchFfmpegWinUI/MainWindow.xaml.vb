@@ -29,7 +29,6 @@ Public Class MainWindow
         _backdrop.SetBackdrop(BackdropType.Mica, useAcrylic)
 
         TryCustomizeTitleBar(useAcrylic)
-
         FileListTip.Target = ConvertingFiles
     End Sub
 
@@ -57,7 +56,6 @@ Public Class MainWindow
     Private _loaded As Boolean
     Private Sub MainWindow_Activated(sender As Object, args As WindowActivatedEventArgs) Handles Me.Activated
         WinUIVbHost.Instance.CurrentWindow = Me
-
         If _loaded Then Return
         _loaded = True
 
@@ -242,16 +240,14 @@ Public Class MainWindow
     End Sub
 
     Private Async Sub BtnCleanConverted_Click() Handles BtnCleanConverted.Click
-        Dim folderPicker As New System.Windows.Forms.FolderBrowserDialog
-        Dim folder = If(folderPicker.ShowDialog = System.Windows.Forms.DialogResult.OK,
-            folderPicker.SelectedPath, Nothing)
+        Dim folder = (Await PickFolderAsync())?.Path
         If folder Is Nothing Then Return
         Dim selectedFormat = DirectCast(CmbCurFormat.SelectedItem, VideoFormatReference)
         Dim currentPostfix = "_" & selectedFormat.FormatName & selectedFormat.FileExtension
-        Dim filesInFolder = New DirectoryInfo(folder).GetFiles()
+        Dim filesInFolder = New DirectoryInfo(folder).GetFiles("*", SearchOption.AllDirectories)
         Dim fileNoExtCache =
             Aggregate f In filesInFolder
-            Select Path.Combine(folderPicker.SelectedPath,
+            Select Path.Combine(f.DirectoryName,
                                 Path.GetFileNameWithoutExtension(f.Name))
             Into ToHashSet
         Dim removeCandidate =
@@ -294,8 +290,7 @@ Public Class MainWindow
                 Await Task.Delay(10)
             End If
             Try
-                myComputer.FileSystem.DeleteFile(f, FileIO.UIOption.OnlyErrorDialogs,
-                                                 FileIO.RecycleOption.SendToRecycleBin)
+                myComputer.FileSystem.RecycleFile(f)
                 recycleCount += 1
             Catch ex As Exception
                 errorCount += 1

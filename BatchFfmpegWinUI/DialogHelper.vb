@@ -1,11 +1,13 @@
 ﻿Imports System.Runtime.CompilerServices
 Imports Microsoft.UI.Windowing
 Imports Microsoft.UI.Xaml
+Imports Windows.Storage
+Imports Windows.Storage.Pickers
 Imports WinRT
 
 Module DialogHelper
 
-    Private Declare Function EnableWindow Lib "user32.dll" (hWnd As IntPtr, enable As Boolean) As Boolean
+    Private Declare Function EnableWindow Lib "user32.dll" (hWnd As IntPtr, enable As Integer) As Integer
 
     Private Declare Unicode Function SetWindowLong32 Lib "user32" Alias "SetWindowLongW" (
         hWnd As IntPtr, nIndex As Integer, dwNewLong As Integer) As Integer
@@ -33,7 +35,7 @@ Module DialogHelper
         Dim waitTaskSrc As New TaskCompletionSource
         Dim windowClosed =
             Sub()
-                EnableWindow(hWndCurWnd, True)
+                EnableWindow(hWndCurWnd, 1)
                 curWnd.Activate()
                 waitTaskSrc.SetResult()
             End Sub
@@ -45,7 +47,7 @@ Module DialogHelper
                 loaded = True
                 Dim hWndErrWnd = CastExtensions.As(Of IWindowNative)(errWnd).WindowHandle
                 SetWindowLong(hWndErrWnd, GWLP_HWNDPARENT, hWndCurWnd)
-                EnableWindow(hWndCurWnd, False)
+                EnableWindow(hWndCurWnd, 0)
                 If dialogOptions IsNot Nothing Then
                     Dim windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWndErrWnd)
                     Dim appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId)
@@ -87,6 +89,18 @@ Module DialogHelper
         errWnd.Activate()
 
         Await waitTaskSrc.Task
+    End Function
+
+    Async Function PickFolderAsync(Optional configureDialog As Action(Of FolderPicker) = Nothing) As Task(Of StorageFolder)
+        Dim folderPicker As New FolderPicker With {
+            .ViewMode = PickerViewMode.Thumbnail,
+            .SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+        }
+        folderPicker.FileTypeFilter.Add("*")
+        configureDialog?(folderPicker)
+        Dim hwnd As IntPtr = WinUIVbHost.Instance.GetParentWindow.Handle
+        WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd)
+        Return Await folderPicker.PickSingleFolderAsync()
     End Function
 End Module
 

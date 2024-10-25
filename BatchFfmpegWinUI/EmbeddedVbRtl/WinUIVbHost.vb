@@ -5,7 +5,7 @@ Imports Microsoft.UI.Xaml
 Imports Microsoft.VisualBasic.CompilerServices
 Imports WinRT
 
-Public Class WinUIVbHost
+Class WinUIVbHost
     Implements IVbHost
 
     Public Shared ReadOnly Property Instance As New WinUIVbHost
@@ -57,3 +57,26 @@ Public Class WinUIVbHost
         End Property
     End Class
 End Class
+
+Namespace Global.Microsoft.VisualBasic.CompilerServices
+    <ComponentModel.EditorBrowsable(ComponentModel.EditorBrowsableState.Never)>
+    Interface IVbHost
+        Function GetParentWindow() As System.Windows.Forms.IWin32Window
+        Function GetWindowTitle() As String
+    End Interface
+End Namespace
+
+Namespace Global.System.Windows.Forms
+    Interface IWin32Window
+        ReadOnly Property Handle As IntPtr
+    End Interface
+End Namespace
+
+Namespace Global.Microsoft.VisualBasic.CompilerServices
+    NotInheritable Class HostServices
+
+        Public Shared Property VBHost As IVbHost
+
+    End Class
+
+End Namespace
