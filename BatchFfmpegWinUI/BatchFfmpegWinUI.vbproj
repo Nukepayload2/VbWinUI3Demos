@@ -9,14 +9,15 @@
     <UseWinUI>true</UseWinUI>
     <WindowsSdkPackageVersion>10.0.22621.41</WindowsSdkPackageVersion>
     <!--<PublishAot>True</PublishAot>-->
-    <NoWarn></NoWarn>
+    <NoWarn>CA1416</NoWarn>
+	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+    <EnableMsixTooling>True</EnableMsixTooling>
   </PropertyGroup>
 
-  <!-- Workaround for https://github.com/dotnet/sdk/issues/17890 -->
-  <PropertyGroup>
-    <NoWarn>CA1416, $(NoWarn)</NoWarn>
-    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Scripts\*.bat" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250513003" />

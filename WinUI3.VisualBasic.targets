@@ -14,4 +14,14 @@
     </PropertyGroup>
   </Target>
   
+  <!-- Load the app runtime without MSIX packaging -->
+  <PropertyGroup Condition="'$(WindowsAppSDKSelfContained)'=='true'">
+    <WindowsAppSdkAutoInitialize>false</WindowsAppSdkAutoInitialize>
+    <WindowsAppSdkUndockedRegFreeWinRTInitialize>false</WindowsAppSdkUndockedRegFreeWinRTInitialize>
+  </PropertyGroup>
+  
+  <ItemGroup Condition="'$(WindowsAppSDKSelfContained)'=='true'">
+    <Compile Include="$(MSBuildThisFileDirectory)include\UndockedRegFreeWinRTAutoInitializer.vb" LinkBase="include"/>
+  </ItemGroup>
+
 </Project>

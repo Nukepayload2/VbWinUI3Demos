@@ -144,7 +144,7 @@ Module VideoConverter
         Dim procStart As New ProcessStartInfo With {
             .UseShellExecute = False,
             .FileName = "cmd",
-            .Arguments = $"/c {vidFile.ScriptName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
+            .Arguments = $"/c Scripts\{vidFile.ScriptName}.bat ""{vidFile.Path}"" ""{vidFile.Output}""",
             .CreateNoWindow = True,
             .RedirectStandardOutput = True,
             .RedirectStandardError = True,

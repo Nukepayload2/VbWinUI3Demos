@@ -5,13 +5,17 @@ VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "BatchFfmpegWinUI", "BatchFfmpegWinUI\BatchFfmpegWinUI.vbproj", "{3EA55F13-94AB-47BD-B991-FED7BB2CA9F1}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "BatchFfmpegWinUI_Pack", "BatchFfmpegWinUI_Pack\BatchFfmpegWinUI_Pack.wapproj", "{491C0DE8-3ED2-46C4-B722-387C55AA16C2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{62C1139F-B944-4DB9-A608-8E98F5E72865}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 		ReadMe.md = ReadMe.md
 		WinUI3.VisualBasic.targets = WinUI3.VisualBasic.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCPatch", "XamlCPatch", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		XamlCPatch\VisualBasicAppPass1.tt = XamlCPatch\VisualBasicAppPass1.tt
+		XamlCPatch\VisualBasicPagePass2.tt = XamlCPatch\VisualBasicPagePass2.tt
 	EndProjectSection
 EndProject
 Global
@@ -48,36 +52,6 @@ Global
 		{3EA55F13-94AB-47BD-B991-FED7BB2CA9F1}.Release|x64.Build.0 = Release|x64
 		{3EA55F13-94AB-47BD-B991-FED7BB2CA9F1}.Release|x86.ActiveCfg = Release|Any CPU
 		{3EA55F13-94AB-47BD-B991-FED7BB2CA9F1}.Release|x86.Build.0 = Release|Any CPU
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|Any CPU.Build.0 = Debug|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|Any CPU.Deploy.0 = Debug|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|ARM.ActiveCfg = Debug|ARM
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|ARM.Build.0 = Debug|ARM
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|ARM.Deploy.0 = Debug|ARM
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|ARM64.Build.0 = Debug|ARM64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|ARM64.Deploy.0 = Debug|ARM64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|x64.ActiveCfg = Debug|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|x64.Build.0 = Debug|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|x64.Deploy.0 = Debug|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|x86.ActiveCfg = Debug|x86
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|x86.Build.0 = Debug|x86
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Debug|x86.Deploy.0 = Debug|x86
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|Any CPU.ActiveCfg = Release|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|Any CPU.Build.0 = Release|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|Any CPU.Deploy.0 = Release|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|ARM.ActiveCfg = Release|ARM
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|ARM.Build.0 = Release|ARM
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|ARM.Deploy.0 = Release|ARM
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|ARM64.ActiveCfg = Release|ARM64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|ARM64.Build.0 = Release|ARM64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|ARM64.Deploy.0 = Release|ARM64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|x64.ActiveCfg = Release|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|x64.Build.0 = Release|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|x64.Deploy.0 = Release|x64
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|x86.ActiveCfg = Release|x86
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|x86.Build.0 = Release|x86
-		{491C0DE8-3ED2-46C4-B722-387C55AA16C2}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

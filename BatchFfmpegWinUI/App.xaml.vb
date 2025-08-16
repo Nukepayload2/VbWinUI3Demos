@@ -1,6 +1,7 @@
 Imports System.IO
 Imports System.Text
 Imports Microsoft.UI.Xaml
+Imports Microsoft.VisualBasic.CompilerServices
 
 Public Class App
     Inherits Microsoft.UI.Xaml.Application
@@ -9,6 +10,7 @@ Public Class App
     Sub New()
         InitializeComponent()
         AppDebugSettings = DebugSettings
+        HostServices.VBHost = WinUIVbHost.Instance
     End Sub
 
     Private _mWindow As Window
