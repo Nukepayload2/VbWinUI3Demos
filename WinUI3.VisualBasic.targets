@@ -21,7 +21,7 @@
   </PropertyGroup>
   
   <ItemGroup Condition="'$(WindowsAppSDKSelfContained)'=='true'">
-    <Compile Include="$(MSBuildThisFileDirectory)include\UndockedRegFreeWinRTAutoInitializer.vb" LinkBase="include"/>
+    <Compile Include="$(MSBuildThisFileDirectory)include\UndockedRegFreeWinRTAutoInitializer.vb" LinkBase="My Project"/>
   </ItemGroup>
 
 </Project>
