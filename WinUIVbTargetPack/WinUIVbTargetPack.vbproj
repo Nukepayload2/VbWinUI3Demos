@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Nukepayload2.UI.VBWinUI3</PackageId>
+    <PackageVersion>0.9.3-beta</PackageVersion>
+    <Authors>Nukepayload2</Authors>
+    <Description>WinUI 3 build support for Visual Basic projects with automatic MSBuild target integration</Description>
+    <PackageTags>winui;visualbasic;vb;build;targets;msbuild</PackageTags>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <RootNamespace>WinUIVbTargetPack</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <RepositoryUrl>https://github.com/Nukepayload2/VbWinUI3Demos</RepositoryUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="buildTransitive\Nukepayload2.UI.VBWinUI3.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\WinUI3.VisualBasic.targets" LinkBase="buildTransitive" PackagePath="buildTransitive\$(PackageId).targets" />
+    <Content Include="..\WinUI3.VisualBasic.props" LinkBase="buildTransitive" PackagePath="buildTransitive\$(PackageId).props" />
+    <Content Include="..\include\UndockedRegFreeWinRTAutoInitializer.vb" LinkBase="buildTransitive\include" PackagePath="buildTransitive\include\UndockedRegFreeWinRTAutoInitializer.vb" />
+    <Content Include="readme.md" PackagePath="readme.md" />
+  </ItemGroup>
+
+</Project>

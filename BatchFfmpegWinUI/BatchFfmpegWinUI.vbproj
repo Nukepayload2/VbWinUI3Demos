@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <!-- Import the common workaround file -->
+  <Import Project="$(WinUI3VBPropFilePath)" />
   <Import Project="$(WinUI3VBTargetFilePath)" />
   
 </Project>

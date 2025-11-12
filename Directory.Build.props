@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <WinUI3VBTargetFilePath>$(MSBuildThisFileDirectory)WinUI3.VisualBasic.targets</WinUI3VBTargetFilePath>
+    <WinUI3VBPropFilePath>$(MSBuildThisFileDirectory)WinUI3.VisualBasic.props</WinUI3VBPropFilePath>
   </PropertyGroup>
 
 </Project>
