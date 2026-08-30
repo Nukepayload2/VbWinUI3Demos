@@ -77,19 +77,4 @@ Demonstrates how to use MSBuild extension points to invoke the C# XAML compiler 
 Stopped with error. Because it has severe performance issues.
 
 ### Custom XAML compiler
-Use the `XamlCompilerTaskPath` MSBuild property to replace the path of `Microsoft.UI.Xaml.Markup.Compiler.dll` with a custom XAML compiler.
-
-The build artifacts won't be published until Microsoft supports building `Microsoft.UI.Xaml.Markup.Compiler.dll` from source.
-
-#### Status
-⚠
-I've modified the [VB code template files](XamlCPatch) to fix the following problems. But I'm unable to verify and compile them.
-- Fixed the generated entry point
-- Page generator: Fixed `element.IsBindingFileRoot` in `Output_GetBindingConnectorCase`
-- Page generator: Fixed `TryGetBindingObject` in `VectorChanged_*`
-
-### WinUIGallery
-A VB version of WinUIGallery `v1.1`. It uses the C# XAML converter until the official VB WinUI3 XAML converter works correctly.
-
-#### Status
-WIP, depends on `XamlLanguageConverter`.
+Moved to https://github.com/Nukepayload2/winui3-vbxamlc
