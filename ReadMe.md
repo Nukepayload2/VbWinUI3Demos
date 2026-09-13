@@ -24,7 +24,7 @@ Known problems:
 - [x] Workaround blocking bugs of the WinUI 3 XAML compiler - Generate Xbf files and VB source files
 - [x] Run apps without MSIX packaging
 - [x] Use a custom XAML compiler (Approach 3) - see [Custom XAML compiler](#custom-xaml-compiler)
-- [ ] Publish a NuGet package that contains VB specific build transitive files, so any VB projects will be able to use WinUI 3 without editing `*.vbproj` manually.
+- [x] Publish a NuGet package that contains VB specific build transitive files, so any VB projects will be able to use WinUI 3 without editing `*.vbproj` manually.
 - [ ] Publish a VSIX to add VB WinUI 3 templates to Visual Studio.
 - [ ] Write a new VB application framework for WinUI 3 - Allow users to delete `Program.vb` and use events to configure the App in the `Application` class
 - [ ] Write a new VB "My extension" for WinUI 3 - Enable `My.*` for WinUI 3 specific things
