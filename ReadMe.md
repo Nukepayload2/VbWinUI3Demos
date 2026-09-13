@@ -7,14 +7,12 @@ Works, verified with Visual Studio and with `dotnet build` (Windows App SDK 2.2.
 
 - XAML compilation by the forked compiler, including the `Sub Main` entry point - a VB project needs no `Program.vb`.
 - XBF generation, running self-contained without MSIX, Mica/Acrylic, WinForms host integration (`HostServices.VBHost`).
-- `BatchFfmpegWinUI` builds and shows its window; all three of its XAML files compile.
+- `BatchFfmpegWinUI` builds warning-clean (`0 warnings, 0 errors`) and shows its window; all three of its XAML files compile.
 
 Known problems:
 
 - The stock VB XAML generator cannot be used for this setup: it emits `Public Class Program` + `Sub Program`, which provides no entry point and collides with the reg-free WinRT initializer (`BC30179`). The forked compiler is required, so `-p:VBWinUI3XamlCompilerEnabled=false` does not build the sample.
-- The generated VB is warning-clean with compiler `3.0.0-dev.260913.10`: `BatchFfmpegWinUI` reports `0 warnings, 0 errors`. Earlier compiler builds reported `BC40005` because `XamlUserType.BoxedType` was emitted without `Overrides`.
 - `ProgressDialog` is reachable from **Clean Converted** when more than 10 files are selected (`MainWindow.xaml.vb:270`); that path was never exercised during verification.
-- The `Nukepayload2.UI.VBWinUI3 0.10.0-beta` currently on nuget.org still pins compiler `3.0.0-dev.260913.1`, so published users do not get the fork's fixes yet. A metapackage release pointing at the current compiler version is still pending.
 
 ## Progress
 - [x] No C# or C++ projects for startup
