@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
-    <PackageReference Include="Nukepayload2.UI.VBWinUI3.XamlCompiler" Version="3.0.0-dev" />
+    <PackageReference Include="Nukepayload2.UI.VBWinUI3.XamlCompiler" Version="3.0.0-dev.260913.1" />
   </ItemGroup>
 
   <!-- Import the common workaround file -->
