@@ -9,10 +9,6 @@ Works, verified with Visual Studio and with `dotnet build` (Windows App SDK 2.2.
 - XBF generation, running self-contained without MSIX, Mica/Acrylic, WinForms host integration (`HostServices.VBHost`).
 - `BatchFfmpegWinUI` builds warning-clean (`0 warnings, 0 errors`) and shows its window; all three of its XAML files compile.
 
-Known problems:
-
-- The stock VB XAML generator cannot be used for this setup: it emits `Public Class Program` + `Sub Program`, which provides no entry point and collides with the reg-free WinRT initializer (`BC30179`). The forked compiler is required, so `-p:VBWinUI3XamlCompilerEnabled=false` does not build the sample.
-
 ## Progress
 - [x] No C# or C++ projects for startup
 - [x] Load `XamlControlsResources` from `Microsoft.UI.Xaml.Controls` automatically
