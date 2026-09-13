@@ -21,8 +21,8 @@
             <TextBlock Margin="4,0" VerticalAlignment="Center">Encoding:</TextBlock>
             <ComboBox x:Name="CmbCurFormat" SelectedIndex="0" VerticalAlignment="Center">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock ToolTipService.ToolTip="{Binding Path=Description,Mode=OneTime}" Text="{Binding Path=DisplayName,Mode=OneTime}"/>
+                    <DataTemplate x:DataType="local:VideoFormatReference">
+                        <TextBlock ToolTipService.ToolTip="{x:Bind Description}" Text="{x:Bind DisplayName}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
                 <local:VideoFormatReference FormatName="AV1" ScriptName="AV1_NVGPU" DisplayName="AV1 with NVIDIA GPU" FileExtension=".mp4" Description="Fast, high compression ratio, uses NVIDIA GPU."/>
@@ -86,7 +86,7 @@
                   Margin="4" SelectionMode="Extended" CornerRadius="{ThemeResource ControlCornerRadius}"
                   Background="{ThemeResource SystemRevealAltHighColor}">
             <ListView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="local:ConvertibleVideo">
                     <Grid Margin="0,4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="32"/>
@@ -100,20 +100,20 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                  Glyph="{Binding Path=Icon, Mode=OneWay}" Grid.RowSpan="2"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Path=FormatName, Mode=OneTime}" 
+                                  Glyph="{x:Bind Icon, Mode=OneWay}" Grid.RowSpan="2"/>
+                        <TextBlock Grid.Column="1" Text="{x:Bind FormatName}" 
                                    VerticalAlignment="Center" FontWeight="Bold"
                                    FontSize="{ThemeResource SubtitleTextBlockFontSize}" 
                                    Grid.RowSpan="2"/>
-                        <TextBlock Grid.Column="2" Margin="8,0,0,0" Text="{Binding Path=Path, Mode=OneTime}"/>
+                        <TextBlock Grid.Column="2" Margin="8,0,0,0" Text="{x:Bind Path}"/>
                         <TextBlock Grid.Column="2" Margin="8,0,0,0" Grid.Row="1">
-                            → <Run Text="{Binding Path=Output, Mode=OneTime}"/>
+                            → <Run Text="{x:Bind Output}"/>
                         </TextBlock>
                         <ProgressBar Grid.Row="2" Height="4" HorizontalAlignment="Stretch" Margin="4"
-                                     Maximum="{Binding Path=ProgressMax, Mode=OneWay}" Grid.Column="2"
-                                     Value="{Binding Path=ProgressValue, Mode=OneWay}" 
-                                     IsIndeterminate="{Binding Path=ProgressIndeterminate, Mode=OneWay}"
-                                     Visibility="{Binding Path=ProgressVisibility, Mode=OneWay}"/>
+                                     Maximum="{x:Bind ProgressMax, Mode=OneWay}" Grid.Column="2"
+                                     Value="{x:Bind ProgressValue, Mode=OneWay}" 
+                                     IsIndeterminate="{x:Bind ProgressIndeterminate, Mode=OneWay}"
+                                     Visibility="{x:Bind ProgressVisibility, Mode=OneWay}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

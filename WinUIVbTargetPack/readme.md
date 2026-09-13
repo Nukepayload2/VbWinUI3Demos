@@ -10,7 +10,7 @@ https://github.com/Nukepayload2/VbWinUI3Demos
 ```xml
 <ItemGroup>
   <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
-  <PackageReference Include="Nukepayload2.UI.VBWinUI3" Version="0.10.0-beta" />
+  <PackageReference Include="Nukepayload2.UI.VBWinUI3" Version="0.11.0-beta" />
 </ItemGroup>
 ```
 

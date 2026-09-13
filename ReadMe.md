@@ -8,6 +8,7 @@ Works, verified with Visual Studio and with `dotnet build` (Windows App SDK 2.2.
 - XAML compilation by the forked compiler, including the `Sub Main` entry point - a VB project needs no `Program.vb`.
 - XBF generation, running self-contained without MSIX, Mica/Acrylic, WinForms host integration (`HostServices.VBHost`).
 - `BatchFfmpegWinUI` builds warning-clean (`0 warnings, 0 errors`) and shows its window; all three of its XAML files compile.
+- `BatchFfmpegWinUI` binds with `x:Bind`, including `x:DataType` templates.
 
 ## Progress
 - [x] No C# or C++ projects for startup
