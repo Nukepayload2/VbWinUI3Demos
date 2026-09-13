@@ -1,4 +1,4 @@
-﻿Option Strict On
+Option Strict On
 
 Imports System.Collections.ObjectModel
 Imports System.IO
@@ -19,11 +19,13 @@ Public Class MainWindow
 
     Sub New()
 
-        Title = "WinUI 3 VB Demo - mp4 converter"
+        ' Window.Title cannot be read before the window is shown (E_FAIL); keep the caption here.
+        Dim windowTitle = "WinUI 3 VB Demo - mp4 converter"
+        Title = windowTitle
 
         InitializeComponent()
 
-        TblTitleText.Text = Title
+        TblTitleText.Text = windowTitle
         _backdrop = New BackdropHelper(Me)
         Dim useAcrylic = False
         _backdrop.SetBackdrop(BackdropType.Mica, useAcrylic)
