@@ -12,7 +12,6 @@ Works, verified with Visual Studio and with `dotnet build` (Windows App SDK 2.2.
 Known problems:
 
 - The stock VB XAML generator cannot be used for this setup: it emits `Public Class Program` + `Sub Program`, which provides no entry point and collides with the reg-free WinRT initializer (`BC30179`). The forked compiler is required, so `-p:VBWinUI3XamlCompilerEnabled=false` does not build the sample.
-- `ProgressDialog` is reachable from **Clean Converted** when more than 10 files are selected (`MainWindow.xaml.vb:270`); that path was never exercised during verification.
 
 ## Progress
 - [x] No C# or C++ projects for startup
