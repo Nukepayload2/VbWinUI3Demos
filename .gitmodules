@@ -1,3 +1,6 @@
 [submodule "XamlLanguageConverter/CSharpToVB-Backports"]
 	path = XamlLanguageConverter/CSharpToVB-Backports
 	url = https://github.com/Nukepayload2/CSharpToVB-Backports
+[submodule "vbxamlc"]
+	path = vbxamlc
+	url = https://github.com/Nukepayload2/winui3-vbxamlc
