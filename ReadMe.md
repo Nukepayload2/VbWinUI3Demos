@@ -1,4 +1,4 @@
-# VB WinUI 3 Demos
+﻿# VB WinUI 3 Demos
 Demonstrates how to use WinUI 3 in Visual Basic .NET projects.
 
 ## Status
@@ -84,7 +84,7 @@ It converts `.mp4` and `.mkv` videos to `h265` encoding by calling `H265.bat`.
 
 #### Status
 ✅
-Builds and runs with Windows App SDK `2.2.0`.
+Builds and runs with Windows App SDK `2.5.1`.
 
 #### How to use it
 - Install `ffmpeg` to `%programfiles%\ffmpeg\bin`. If you have installed it in a different location, please add it to `%PATH%`.
