@@ -3,7 +3,7 @@ Demonstrates how to use WinUI 3 in Visual Basic .NET projects.
 
 ## Status
 
-Works, verified with Visual Studio and with `dotnet build` (Windows App SDK 2.2.0, .NET 10):
+Works, verified with Visual Studio and with `dotnet build` on .NET 10:
 
 - XAML compilation by the forked compiler, including the `Sub Main` entry point - a VB project needs no `Program.vb`.
 - XBF generation, running self-contained without MSIX, Mica/Acrylic, WinForms host integration (`HostServices.VBHost`).
