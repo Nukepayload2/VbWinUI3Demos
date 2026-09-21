@@ -1,4 +1,4 @@
-Imports System.IO
+﻿Imports System.IO
 Imports System.Text
 Imports Microsoft.UI.Xaml
 Imports Microsoft.VisualBasic.CompilerServices
@@ -23,7 +23,7 @@ Public Class App
     End Sub
 
     Private Sub SetCurDirToAsmDir()
-        Dim appDir = Path.GetDirectoryName(GetType(Program).Assembly.Location)
+        Dim appDir = AppContext.BaseDirectory
         Directory.SetCurrentDirectory(appDir)
     End Sub
 
